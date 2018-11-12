@@ -1,6 +1,9 @@
+import java.util.LinkedList;
+
 public class Board {
 	
 	private char[][] board;
+	private LinkedList<MoveSet> moveList = new LinkedList<>();
 	
 	public Board() {
 		this.board = new char[8][8];
