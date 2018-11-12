@@ -8,7 +8,6 @@ public class Board {
         Board() {
             this.board = new char[8][8];
 		
-
             availableMoves = new HashSet<>();
             
             initializeBoard();
@@ -17,7 +16,21 @@ public class Board {
         private void initializeBoard() {
             for(int i = 0; i < 8; i++) {
 		for(int j = 0; j < 8; j++) {
-                    board[i][j] = '-';
+                    if(i == 2) {
+                        board[i][j] = 'X';
+                    }
+                    else if(i == 3) {
+                        board[i][j] = 'O';
+                    }
+                    else if(j == 6) {
+                        board[i][j] = 'X';
+                    }
+                    else if(j == 2) {
+                        board[i][j] = 'X';
+                    }
+                    else {
+                        board[i][j] = '-';
+                    }
 		}
             }
             
@@ -53,7 +66,7 @@ public class Board {
 		return sb.toString();
 	}
         
-        // 0 -> no move
+        // 0 -> blank
         // 1 -> X
         // 2 -> O
         public int[][] getIntBoard() {
@@ -85,18 +98,28 @@ public class Board {
                 }
             }
 	}
-	
         
+        //not thouroughly tested
         public void checkRow(int row) { 
-            for (int i = 0; i < 8; i++) {
-                if(board[row][i] != board[row][i+1]) {
+            for (int j = 1; j < 8; j++) {
+                if(board[row][j] != board[row][j-1]) {
                     break;
                 }
-                if(i == 7) {
-                    //WIN
-                    System.out.println("datWIN");
+                if(j == 3) {
+                    System.out.println("\nrow WIN");
                 }
             }
+        }
+        //not thouroughly tested
+        public void checkCol(int col) { 
+            for (int i = 1; i < 8; i++) {
+                if(board[i][col] != board[i-1][col]) {
+                    break;
+                }
+                if(i == 3) {
+                    System.out.println("\ncol WIN");
+                }
+            } 
         }
 	
 }
