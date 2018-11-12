@@ -1,9 +1,14 @@
 import java.util.*;
 
 public class Board {
+    
+        public enum GameState {
+            
+        }
 	
 	private char[][] board;
         private HashSet<Integer> availableMoves;    //keeps track of valid moves
+        //private int currentPlayer;
         
         Board() {
             this.board = new char[8][8];
