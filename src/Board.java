@@ -1,9 +1,14 @@
+import java.util.LinkedList;
+import java.util.List;
+
 public class Board {
 	
 	private char[][] board;
+	private List<String> moveHistory;
 	
 	public Board() {
 		this.board = new char[8][8];
+		this.moveHistory = new LinkedList<>();
 		
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++){
@@ -20,6 +25,14 @@ public class Board {
 		return board;
 	}
 	
+	public void placeBoard(int x, int y, char symbol) {
+		this.board[x][y] = symbol;
+	}
+	
+	public boolean detectWin() {
+		return false;
+	}
+	
 	public String printBoard() {
 		StringBuilder sb = new StringBuilder();
 		
@@ -30,7 +43,9 @@ public class Board {
 			for(int j = 0; j < 8; j++) {
 				sb.append(board[i][j] + " ");
 			}
-			sb.append("	   " + "Moves Here");	
+			
+			if(!moveHistory.isEmpty())
+				sb.append("	   " + "Moves Here");	
 		}
 		
 		return sb.toString();
