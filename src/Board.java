@@ -104,7 +104,7 @@ public class Board {
             }
 	}
         
-        //not fully working, on todo list
+        //not fully working, on to-do list
         public void checkRow(int row) { 
             int pairs = 0;
             
@@ -120,7 +120,7 @@ public class Board {
                 }
             }
         }
-        //not fully working, on todo list
+        //not fully working, on to-do list
         public void checkCol(int col) { 
             int pairs = 0;
             
