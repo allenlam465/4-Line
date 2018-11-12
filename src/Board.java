@@ -99,23 +99,35 @@ public class Board {
             }
 	}
         
-        //not thouroughly tested
+        //not fully working, on todo list
         public void checkRow(int row) { 
-            int numInARow = 0;
+            int pairs = 0;
             
             for(int j = 1; j < 8; j++) {
-                if(board[row][j] == board[row][j-1]) {
-                    
+                if(board[row][j] != board[row][j-1]) {
+                    break;
+                }
+                else if(board[row][j] == board[row][j-1]) {
+                    pairs++;
+                }
+                if(j == 3) {
+                    System.out.println("\nrow WIN");
                 }
             }
         }
-        //not thouroughly tested
+        //not fully working, on todo list
         public void checkCol(int col) { 
-            int numInARow = 0;
+            int pairs = 0;
             
             for(int i = 1; i < 8; i++) {
                 if(board[i][col] != board[i-1][col]) {
                     break;
+                }
+                else if(board[i][col] == board[i-1][col]) {
+                    pairs++;
+                }
+                if(pairs == 3) {
+                    System.out.println("\ncol WIN");
                 }
             } 
         }
