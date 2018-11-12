@@ -101,23 +101,21 @@ public class Board {
         
         //not thouroughly tested
         public void checkRow(int row) { 
-            for (int j = 1; j < 8; j++) {
-                if(board[row][j] != board[row][j-1]) {
-                    break;
-                }
-                if(j == 3) {
-                    System.out.println("\nrow WIN");
+            int numInARow = 0;
+            
+            for(int j = 1; j < 8; j++) {
+                if(board[row][j] == board[row][j-1]) {
+                    
                 }
             }
         }
         //not thouroughly tested
         public void checkCol(int col) { 
-            for (int i = 1; i < 8; i++) {
+            int numInARow = 0;
+            
+            for(int i = 1; i < 8; i++) {
                 if(board[i][col] != board[i-1][col]) {
                     break;
-                }
-                if(i == 3) {
-                    System.out.println("\ncol WIN");
                 }
             } 
         }
