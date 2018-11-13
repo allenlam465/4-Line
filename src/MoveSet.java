@@ -1,14 +1,17 @@
-
 public class MoveSet {
 	
-	private String player, opponent;
-	private int playerX, playerY, opponentX, opponentY;
+	private String move;
+	private int x,y;
 	
-	public MoveSet(int x, int y) {
-		this.playerX = x;
-		this.playerY = y;
+	public MoveSet(String move, int x, int y) {
+		this.move = move;
 		
-		
+		this.x = x;
+		this.y = y;
+	}
+	
+	public String getMove() {
+		return move;
 	}
 	
 	public int getX() {
@@ -19,13 +22,9 @@ public class MoveSet {
 		return y;
 	}
 	
-	public String getPlayerMove() {
-		return player;
+	public int convertXMove(String move) {	
+		int pos = Character.toUpperCase(move.charAt(0)) - 65;
+		return pos;
 	}
 	
-	private String convertStringMove() {
-		
-		Character.toString(((char)(65 + y)));
-		
-	}
-}
+ }
