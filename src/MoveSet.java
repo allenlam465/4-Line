@@ -1,31 +1,53 @@
-
 public class MoveSet {
 	
-	private String player, opponent;
-	private int playerX, playerY, opponentX, opponentY;
+	private String playerMove, oppoMove;
+	private int playerX, playerY, oppoX, oppoY;
 	
-	public MoveSet(int x, int y) {
-		this.playerX = x;
-		this.playerY = y;
+	public MoveSet(String move) {
+		this.playerMove = move;
 		
+		this.playerX = convertMove(playerMove);
+		this.playerY = Integer.parseInt(playerMove);
+	}
+	
+	public void setOppoMove(String move) {
+		this.oppoMove = move;
 		
+		this.playerX = convertMove(oppoMove);
+		this.playerY = Integer.parseInt(oppoMove);
 	}
 	
-	public int getX() {
-		return x;
+	public int getplayerX() {
+		return playerX;
 	}
 	
-	public int getY() {
-		return y;
+	public int getplayerY() {
+		return playerY;
 	}
 	
-	public String getPlayerMove() {
-		return player;
+	public int getoppoX() {
+		return oppoX;
 	}
 	
-	private String convertStringMove() {
+	public int getoppoY() {
+		return oppoY;
+	}
+	
+	public int convertMove(String move) {	
+		int pos = Character.toUpperCase(move.charAt(0)) - 65;
+		return pos;
+	}
+	
+	public String printMoveSet(){
+		StringBuilder sb = new StringBuilder();
 		
-		Character.toString(((char)(65 + y)));
+		if(!playerMove.equals(null))
+			sb.append(playerMove + " ");
 		
+		if(!oppoMove.equals(null))
+			sb.append(oppoMove);
+		
+		return sb.toString();
 	}
+
 }
