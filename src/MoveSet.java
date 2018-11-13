@@ -49,5 +49,4 @@ public class MoveSet {
 		
 		return sb.toString();
 	}
-
-}
+ }
