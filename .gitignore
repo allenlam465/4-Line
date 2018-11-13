@@ -2,3 +2,9 @@
 .project
 *.DS_Store
 *.class
+/bin/
+build/*
+dist/*
+nbproject/*
+*.xml
+*.mf
