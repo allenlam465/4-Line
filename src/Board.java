@@ -6,20 +6,22 @@ public class Board {
 
 	}
 
+	private int N = 8;
 	private char[][] board;
-	private LinkedList<MoveSet> moveHistory;
+	private LinkedList<Move> moveHistory;
 	private HashSet<Integer> availableMoves;    //keeps track of valid moves
+	
 
 	public Board() {
-		this.board = new char[8][8];
+		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
 		availableMoves = new HashSet<>();
 		initializeBoard();
 	}
 
 	private void initializeBoard() {
-		for(int i = 0; i < 8; i++) {
-			for(int j = 0; j < 8; j++){
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++){
 				board[i][j] = '-';
 			}
 		}
@@ -69,11 +71,11 @@ public class Board {
 		int y = Character.getNumericValue(move.charAt(1)) - 1;
 
 		if(x >= 0 && 
-				x < 8 && 
+				x < N && 
 				y >= 0 && 
-				y < 8 && 
+				y < N && 
 				board[x][y] == '-') {
-			MoveSet placed = new MoveSet(move,x,y);
+			Move placed = new Move(move,x,y);
 			moveHistory.add(placed);
 			return true;
 		}
@@ -82,7 +84,7 @@ public class Board {
 	}
 
 	public void placePiece(char piece) {		
-		MoveSet placed = moveHistory.getLast();
+		Move placed = moveHistory.getLast();
 		int x = placed.getX(), y = placed.getY();
 
 		board[x][y] = piece;
@@ -91,13 +93,25 @@ public class Board {
 
 	public boolean checkDraw() {
 
-		for(int i = 0; i < board.length; i++) {
-			for(int j = 0; j < board.length; i++) {
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; i++) {
 				if(board[i][j] == '-')
 					return false;
 			}
 		}
 
+		return true;
+	}
+	
+	public boolean emptyBoard() {
+		
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; i++) {
+				if(board[i][j] != '-')
+					return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -107,9 +121,9 @@ public class Board {
 
 		sb.append("  1 2 3 4 5 6 7 8 	Player vs. Oppenent");
 
-		for(int i = 0; i < 8; i ++) {
+		for(int i = 0; i < N; i ++) {
 			sb.append("\n" + Character.toString(((char)(65 + i))) + " ");
-			for(int j = 0; j < 8; j++) {
+			for(int j = 0; j < N; j++) {
 				sb.append(board[i][j] + " ");
 			}
 

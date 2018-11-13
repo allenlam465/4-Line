@@ -3,9 +3,7 @@ import java.util.Scanner;
 public class Driver {
 
 	public static void main(String[] args) {
-
 		menu();
-
 	}
 
 	private static void menu() {
@@ -14,11 +12,31 @@ public class Driver {
 		boolean matchOver = false;
 
 		System.out.println("4 In a Line Game with Minmax and Alpha-Beta Pruning");
+		System.out.print("Time allowed for generating moves (seconds)?\n>");
+		
+		int time = Integer.parseInt(s.nextLine());
+		
 		System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
 
 		String input = s.nextLine();
 
 		System.out.println(input);
+		
+		/*
+		 * Better to change to a while statement??
+		 * 
+		 * while(matchOver()){
+		 * 
+		 * 	if(currentPlayer == 1)
+		 * 
+		 *  else
+		 *  
+		 *  
+		 *  currentPlayer = 
+		 *  
+		 * }
+		 * 
+		 */
 
 		switch(input) {
 		
@@ -38,9 +56,9 @@ public class Driver {
 					System.out.println("Invalid move pick another move.");
 				}
 				
-				matchOver = true;
 			}
 			break;
+			
 		case "2":
 			System.out.println("Opponent goes first.");
 			while(!matchOver) {
@@ -67,6 +85,7 @@ public class Driver {
 		}
 
 
+		s.close();
 	}
 
 }

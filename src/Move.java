@@ -1,9 +1,9 @@
-public class MoveSet {
+public class Move {
 	
 	private String move;
 	private int x,y;
 	
-	public MoveSet(String move, int x, int y) {
+	public Move(String move, int x, int y) {
 		this.move = move;
 		
 		this.x = x;
