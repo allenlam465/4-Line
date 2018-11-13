@@ -7,44 +7,51 @@ public class Board {
 	}
 
 	private char[][] board;
-	private LinkedList<MoveSet> moveList;
+	private LinkedList<MoveSet> moveHistory;
 	private HashSet<Integer> availableMoves;    //keeps track of valid moves
 
 	public Board() {
 		this.board = new char[8][8];
-		moveList = new LinkedList<>();
+		moveHistory = new LinkedList<>();
 		availableMoves = new HashSet<>();
 		initializeBoard();
 	}
 
 	private void initializeBoard() {
 		for(int i = 0; i < 8; i++) {
-			for(int j = 0; j < 8; j++) {
-				if(i == 2) {
-					board[i][j] = 'X';
-				}
-				else if(i == 3) {
-					board[i][j] = 'O';
-				}
-				else if(j == 6) {
-					board[i][j] = 'X';
-				}
-				else if(j == 2) {
-					board[i][j] = 'X';
-				}
-				else {
-					board[i][j] = '-';
-				}
+			for(int j = 0; j < 8; j++){
+				board[i][j] = '-';
 			}
-		}
-
-		availableMoves.clear();
-
-		for (int i = 0; i < 64; i++) {
-			availableMoves.add(i);
 		}
 	}
 
+	//	private void initializeBoard() {
+	//		for(int i = 0; i < 8; i++) {
+	//			for(int j = 0; j < 8; j++) {
+	//				if(i == 2) {
+	//					board[i][j] = 'X';
+	//				}
+	//				else if(i == 3) {
+	//					board[i][j] = 'O';
+	//				}
+	//				else if(j == 6) {
+	//					board[i][j] = 'X';
+	//				}
+	//				else if(j == 2) {
+	//					board[i][j] = 'X';
+	//				}
+	//				else {
+	//					board[i][j] = '-';
+	//				}
+	//			}
+	//		}
+	//
+	//		availableMoves.clear();
+	//
+	//		for (int i = 0; i < 64; i++) {
+	//			availableMoves.add(i);
+	//		}
+	//	}
 
 	public void setBoard(char[][] board) {
 		this.board = board;
@@ -53,6 +60,47 @@ public class Board {
 	public char[][] getBoard() {
 		return board;
 	}
+
+	public boolean validateMove(String move) {
+		if(move.equals(null) || move.length() > 2)
+			return false;
+
+		int x = convertXMove(move);
+		int y = Character.getNumericValue(move.charAt(1)) - 1;
+
+		if(x >= 0 && 
+				x < 8 && 
+				y >= 0 && 
+				y < 8 && 
+				board[x][y] == '-') {
+			MoveSet placed = new MoveSet(move,x,y);
+			moveHistory.add(placed);
+			return true;
+		}
+
+		return false;
+	}
+
+	public void placePiece(char piece) {		
+		MoveSet placed = moveHistory.getLast();
+		int x = placed.getX(), y = placed.getY();
+
+		board[x][y] = piece;
+
+	}
+
+	public boolean checkDraw() {
+
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board.length; i++) {
+				if(board[i][j] == '-')
+					return false;
+			}
+		}
+
+		return true;
+	}
+
 
 	public String printBoard() {
 		StringBuilder sb = new StringBuilder();
@@ -71,12 +119,16 @@ public class Board {
 		return sb.toString();
 	}
 
+	private int convertXMove(String move) {	
+		int pos = Character.toUpperCase(move.charAt(0)) - 65;
+		return pos;
+	}
 	// 0 -> blank
 	// 1 -> X
 	// 2 -> O
 	public int[][] getIntBoard() {
 		int[][] intBoard = new int[8][8];
-		
+
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if(this.board[i][j] == '-') {
@@ -90,7 +142,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		return intBoard;
 	}
 
