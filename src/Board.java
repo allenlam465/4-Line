@@ -10,7 +10,7 @@ public class Board {
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
 	private HashSet<Integer> availableMoves;    //keeps track of valid moves
-	
+
 
 	public Board() {
 		this.board = new char[N][N];
@@ -64,7 +64,8 @@ public class Board {
 	}
 
 	public boolean validateMove(String move) {
-		if(move.equals(null) || move.length() > 2)
+		System.out.println(move.length());
+		if(move.equals(null) || (move.length() > 2 || move.length() == 1)) 
 			return false;
 
 		int x = convertXMove(move);
@@ -83,16 +84,20 @@ public class Board {
 		return false;
 	}
 
-	public void placePiece(char piece) {		
+	public void placePiece(int player) {		
 		Move placed = moveHistory.getLast();
 		int x = placed.getX(), y = placed.getY();
 
-		board[x][y] = piece;
+		if(player == 1)
+			board[x][y] = 'X';
+		else 
+			board[x][y] = 'O';
+
+
 
 	}
 
 	public boolean checkDraw() {
-
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; i++) {
 				if(board[i][j] == '-')
@@ -102,19 +107,81 @@ public class Board {
 
 		return true;
 	}
-	
+
 	public boolean emptyBoard() {
-		
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; i++) {
 				if(board[i][j] != '-')
 					return false;
 			}
 		}
-		
+
 		return true;
 	}
 
+	public int evaluateBoard() {
+		int evaluation = 0;
+
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+
+				//UP, DOWN, RIGHT, LEFT
+				if(board[i][j] == 'X') {
+					evaluation += evaluatePieces('X', i, j, 0, 1);
+					//System.out.println("UP EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation += evaluatePieces('X', i, j, 0, -1);
+					//System.out.println("DOWN EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation += evaluatePieces('X', i, j, 1, 0);
+					//System.out.println("RIGHT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation += evaluatePieces('X', i, j, -1, 0);
+					//System.out.println("LEFT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));	
+				}
+
+				//System.out.println("X EVALUATION: " + evaluation);
+
+				if(board[i][j] == 'O') {
+					evaluation -= evaluatePieces('O', i, j, 0, 1);
+					//System.out.println("UP EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation -= evaluatePieces('O', i, j, 0, -1);
+					//System.out.println("DOWN EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation -= evaluatePieces('O', i, j, 1, 0);
+					//System.out.println("RIGHT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+					evaluation -= evaluatePieces('O', i, j, -1, 0);
+					//System.out.println("LEFT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
+				}
+
+				//System.out.println("O EVALUATION: " + evaluation);
+			}
+
+		}
+
+		return evaluation;
+	}
+
+	private int evaluatePieces(char piece, int xPos, int yPos, int horizontal, int vertical) {
+		assert xPos >= 0 && xPos < N && yPos >= 0 && yPos < N;
+
+		int evaluationScore = 0, valueItr = 0;
+		int[] consecutiveValues = {10,100,1000};
+
+		for(
+				int x = xPos + horizontal, y = yPos + vertical;
+				(x >= 0 && x < N) && (y >= 0 && y < N);
+				x += horizontal, y += vertical
+				) {
+
+			if(board[x][y] == piece && valueItr < 3) {
+				evaluationScore += consecutiveValues[valueItr];
+				valueItr++;
+			}
+
+			if(board[x][y] != '-' && board[x][y] != piece) {
+				evaluationScore -= 50;
+			}
+		}
+
+		return evaluationScore;
+	}
 
 	public String printBoard() {
 		StringBuilder sb = new StringBuilder();
