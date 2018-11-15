@@ -38,9 +38,7 @@ public class Driver {
 
 		}while(true);
 
-
-
-		while(!matchOver) {
+		while(!game.checkWin('X') && !game.checkWin('O')) {
 
 			System.out.println(game.printBoard());
 
@@ -57,26 +55,12 @@ public class Driver {
 
 			}while(game.validateMove(input));
 
-
 			currentPlayer *= -1;
+			
+			System.out.println(game.checkWin('X'));
+			System.out.println(game.checkWin('O'));
 
 		}
-
-		/*
-		 * Better to change to a while statement??
-		 * 
-		 * while(matchOver()){
-		 * 
-		 * 	if(currentPlayer == 1)
-		 * 
-		 *  else
-		 *  
-		 *  
-		 *  currentPlayer = 
-		 *  
-		 * }
-		 * 
-		 */
 
 		s.close();
 	}
