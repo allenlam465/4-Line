@@ -37,33 +37,31 @@ public class Driver {
 				System.out.println("Invalid input.");
 
 		}while(true);
-		
-		System.out.println(game.printBoard());
-		
-		
+
+
+
 		while(!matchOver) {
-			
+
+			System.out.println(game.printBoard());
+
 			do{
 				System.out.print("Input Move \n>");
 				input = s.nextLine();
-				
+
 				if(game.validateMove(input)) {
 					game.placePiece(currentPlayer);
-					
-					System.out.println(game.printBoard());
 					System.out.println(game.evaluateBoard());
 				}
-				else {
-					System.out.println("Invalid move pick another move.");
-					System.out.print("Input Move \n>");	
-				}
+				else 
+					System.out.println("Invalid move pick another move.");				
+
 			}while(game.validateMove(input));
-			
-			
+
+
 			currentPlayer *= -1;
-			
+
 		}
-		
+
 		/*
 		 * Better to change to a while statement??
 		 * 

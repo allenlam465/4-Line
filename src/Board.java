@@ -62,9 +62,12 @@ public class Board {
 	public char[][] getBoard() {
 		return board;
 	}
+	
+	public LinkedList<Move> getMoveHistory(){
+		return moveHistory;
+	}
 
 	public boolean validateMove(String move) {
-		System.out.println(move.length());
 		if(move.equals(null) || (move.length() > 2 || move.length() == 1)) 
 			return false;
 
@@ -134,7 +137,7 @@ public class Board {
 					//System.out.println("LEFT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));	
 				}
 
-				//System.out.println("X EVALUATION: " + evaluation);
+				System.out.println("X EVALUATION: " + evaluation);
 
 				if(board[i][j] == 'O') {
 					evaluation -= evaluatePieces('O', i, j, 0, 1);
@@ -147,11 +150,11 @@ public class Board {
 					//System.out.println("LEFT EVALUATION" + evaluatePieces('X', currentMove.getX(), currentMove.getY(), 0, 1));
 				}
 
-				//System.out.println("O EVALUATION: " + evaluation);
+				System.out.println("O EVALUATION: " + evaluation);
 			}
 
 		}
-
+		
 		return evaluation;
 	}
 
@@ -173,11 +176,15 @@ public class Board {
 			}
 
 			if(board[x][y] != '-' && board[x][y] != piece) {
-				evaluationScore -= 50;
+				evaluationScore -= 20;
 			}
 		}
 
 		return evaluationScore;
+	}
+	
+	private int checkKillerMove(char piece, int xPos, int yPos) {
+		return 0;
 	}
 
 	public String printBoard() {
@@ -201,6 +208,7 @@ public class Board {
 		int pos = Character.toUpperCase(move.charAt(0)) - 65;
 		return pos;
 	}
+	
 	// 0 -> blank
 	// 1 -> X
 	// 2 -> O
@@ -234,39 +242,6 @@ public class Board {
 				System.out.print(intBoard[i][j]);
 			}
 		}
-	}
-
-	//not fully working, on to-do list
-	public void checkRow(int row) { 
-		int pairs = 0;
-
-		for(int j = 1; j < 8; j++) {
-			if(board[row][j] != board[row][j-1]) {
-				break;
-			}
-			else if(board[row][j] == board[row][j-1]) {
-				pairs++;
-			}
-			if(j == 3) {
-				System.out.println("\nrow WIN");
-			}
-		}
-	}
-	//not fully working, on to-do list
-	public void checkCol(int col) { 
-		int pairs = 0;
-
-		for(int i = 1; i < 8; i++) {
-			if(board[i][col] != board[i-1][col]) {
-				break;
-			}
-			else if(board[i][col] == board[i-1][col]) {
-				pairs++;
-			}
-			if(pairs == 3) {
-				System.out.println("\ncol WIN");
-			}
-		} 
 	}
 
 }
