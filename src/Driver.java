@@ -1,26 +1,68 @@
+import java.util.Scanner;
 
 public class Driver {
 
 	public static void main(String[] args) {
-		Board x = new Board();
-
 		menu();
-
-		System.out.println(x.printBoard());
-
-		x.checkRow(1);
-		x.checkRow(2);
-		x.checkRow(3);
-
-		x.checkCol(1);
-		x.checkCol(2);
-		x.checkCol(6);
-
 	}
 
 	private static void menu() {
+		int currentPlayer;
+		String input;
+		Board game = new Board();
+		Scanner s = new Scanner(System.in);
+		boolean matchOver = false;
+
 		System.out.println("4 In a Line Game with Minmax and Alpha-Beta Pruning");
-		System.out.println("\nStarting player: \n1. You\n2. Opponent");
+		System.out.print("Time allowed for generating moves (seconds)?\n>");
+
+		int time = Integer.parseInt(s.nextLine());
+
+		do{
+			System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
+
+			input = s.nextLine();
+
+			if(input.equals("1")) {
+				currentPlayer = 1;
+				System.out.println("Player goes first.");
+				break;
+			}
+			else if(input.equals("2")) {
+				currentPlayer = 2;
+				System.out.println("Opponents goes first.");
+				break;
+			}
+			else
+				System.out.println("Invalid input.");
+
+		}while(true);
+
+		while(!game.checkWin('X') && !game.checkWin('O')) {
+
+			System.out.println(game.printBoard());
+
+			do{
+				System.out.print("Input Move \n>");
+				input = s.nextLine();
+
+				if(game.validateMove(input)) {
+					game.placePiece(currentPlayer);
+					System.out.println(game.evaluateBoard());
+				}
+				else 
+					System.out.println("Invalid move pick another move.");				
+
+			}while(game.validateMove(input));
+
+			currentPlayer *= -1;
+			
+			System.out.println(game.checkWin('X'));
+			System.out.println(game.checkWin('O'));
+
+		}
+
+		s.close();
 	}
 
 }
