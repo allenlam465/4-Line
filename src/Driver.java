@@ -52,8 +52,6 @@ public class Driver {
 					
 					System.out.println(game.printBoard());
 					System.out.println(game.evaluateBoard());
-					
-					System.out.print("Input Move \n>");
 				}
 				else {
 					System.out.println("Invalid move pick another move.");

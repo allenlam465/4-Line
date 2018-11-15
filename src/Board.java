@@ -92,9 +92,6 @@ public class Board {
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
-
-
-
 	}
 
 	public boolean checkDraw() {
