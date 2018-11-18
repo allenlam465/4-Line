@@ -15,7 +15,7 @@ public class Driver {
                 
                 int alpha = Integer.MIN_VALUE;
                 int beta  = Integer.MAX_VALUE;
-                int depth = 0;
+                int depth = 3;
 
 		//System.out.println("4 In a Line Game with Minmax and Alpha-Beta Pruning");
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
@@ -47,8 +47,7 @@ public class Driver {
 
 			System.out.println(game.printBoard());
                         
-                        //ABP(Board game, int currentPlayer, int alpha, int beta, int depth)
-                        //ABP(game, currentPlayer, 1, 1, 1);
+                        //ABP(game, currentPlayer, alpha, beta, depth);
 
 			do{
 				System.out.print("\nInput Move \n>");
@@ -76,6 +75,7 @@ public class Driver {
         static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
             Board tempGame = new Board();
             tempGame = game;
+            int run = 0;
             
             System.out.println("\n" + tempGame.printBoard());
             
@@ -84,10 +84,8 @@ public class Driver {
             return v; //return action
         }
         
-        
         static int MaxValue(Board state, int alpha, int beta, int depth) {
-            int utility = 0;
-            
+            //if terminal test(state) then return utility(state)
             if(state.checkDraw()) {
                 return 1;
             }
@@ -97,10 +95,13 @@ public class Driver {
             else if(state.checkWin('X')){
                 return Integer.MIN_VALUE;
             }
-            else {
-                utility += state.evaluateBoard();
+            //cutoff at certain depth
+            if(depth < 3) {
+                depth++;
+                return state.evaluateBoard();
             }
             
+            //v <- neg inf
             int v = Integer.MIN_VALUE;
             
             //go through all actions and update v, a, or accordingly
@@ -109,9 +110,10 @@ public class Driver {
             return v;
         }
         
-        static int MinValue(Board state, int alpha, int beta) {
+        static int MinValue(Board state, int alpha, int beta, int depth) {
             int utility = 0;
             
+             //if terminal test(state) then return utility(state)
             if(state.checkDraw()) {
                 return 1;
             }
@@ -121,10 +123,13 @@ public class Driver {
             else if(state.checkWin('X')){
                 return Integer.MIN_VALUE;
             }
-            else {
-                utility += state.evaluateBoard();
+            //cutoff at certain depth
+            if(depth > 3) {
+                depth++;
+                return state.evaluateBoard();
             }
             
+            //v <- pos inf
             int v = Integer.MAX_VALUE;
             
             //go through all actions and update v, a, or accordingly
