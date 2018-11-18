@@ -2,10 +2,6 @@ import java.util.*;
 
 public class Board {
 
-	public enum GameState {
-
-	}
-
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;

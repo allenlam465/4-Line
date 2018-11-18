@@ -64,5 +64,13 @@ public class Driver {
 
 		s.close();
 	}
+        
+        static int miniMaxAlphaBetaPruning(Board state, int currentPlayer, int depth) {
+            
+            
+            
+            return 0;
+        }
+        
 
 }
