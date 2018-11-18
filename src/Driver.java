@@ -13,8 +13,9 @@ public class Driver {
 		Scanner s = new Scanner(System.in);
 		boolean matchOver = false;
                 
-                double alpha = Double.NEGATIVE_INFINITY;
-                double beta  = Double.POSITIVE_INFINITY;
+                int alpha = Integer.MIN_VALUE;
+                int beta  = Integer.MAX_VALUE;
+                int depth = 0;
 
 		//System.out.println("4 In a Line Game with Minmax and Alpha-Beta Pruning");
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
@@ -45,7 +46,9 @@ public class Driver {
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
 
 			System.out.println(game.printBoard());
-                        //ABP(game, 1, 1, 1, 1);
+                        
+                        //ABP(Board game, int currentPlayer, int alpha, int beta, int depth)
+                        //ABP(game, currentPlayer, 1, 1, 1);
 
 			do{
 				System.out.print("\nInput Move \n>");
@@ -70,35 +73,35 @@ public class Driver {
 		s.close();
 	}
         
-        static double ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
+        static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
             Board tempGame = new Board();
             tempGame = game;
             
             System.out.println("\n" + tempGame.printBoard());
             
-            double v = MaxValue(tempGame, alpha, beta, depth);
+            int v = MaxValue(tempGame, alpha, beta, depth);
             
             return v; //return action
         }
         
         
-        static double MaxValue(Board state, int alpha, int beta, int depth) {
-            double utility = 0;
+        static int MaxValue(Board state, int alpha, int beta, int depth) {
+            int utility = 0;
             
             if(state.checkDraw()) {
                 return 1;
             }
             else if(state.checkWin('O')) {
-                return Double.POSITIVE_INFINITY;
+                return Integer.MAX_VALUE;
             }
             else if(state.checkWin('X')){
-                return Double.NEGATIVE_INFINITY;
+                return Integer.MIN_VALUE;
             }
             else {
                 utility += state.evaluateBoard();
             }
             
-            double v = Double.NEGATIVE_INFINITY;
+            int v = Integer.MIN_VALUE;
             
             //go through all actions and update v, a, or accordingly
             //call MaxValue again
@@ -106,26 +109,26 @@ public class Driver {
             return v;
         }
         
-        static double MinValue(Board state, int alpha, int beta) {
-            double utility = 0;
+        static int MinValue(Board state, int alpha, int beta) {
+            int utility = 0;
             
             if(state.checkDraw()) {
                 return 1;
             }
             else if(state.checkWin('O')) {
-                return Double.POSITIVE_INFINITY;
+                return Integer.MAX_VALUE;
             }
             else if(state.checkWin('X')){
-                return Double.NEGATIVE_INFINITY;
+                return Integer.MIN_VALUE;
             }
             else {
                 utility += state.evaluateBoard();
             }
             
-            double v = Double.POSITIVE_INFINITY;
+            int v = Integer.MAX_VALUE;
             
             //go through all actions and update v, a, or accordingly
-            //call MinValue again
+            //call MaxValue again
             
             return v;
         }
