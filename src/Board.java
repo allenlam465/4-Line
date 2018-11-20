@@ -102,19 +102,15 @@ public class Board {
 					evaluation += evaluatePieces('X', i, j, 1, 0);
 					evaluation += evaluatePieces('X', i, j, -1, 0);
 				}
-
 				//System.out.println("X EVALUATION: " + evaluation);
-
 				if(board[i][j] == 'O') {
 					evaluation -= evaluatePieces('O', i, j, 0, 1);
 					evaluation -= evaluatePieces('O', i, j, 0, -1);
 					evaluation -= evaluatePieces('O', i, j, 1, 0);
 					evaluation -= evaluatePieces('O', i, j, -1, 0);
 				}
-
 				//System.out.println("O EVALUATION: " + evaluation);
 			}
-
 		}
 
 		return evaluation;
