@@ -38,8 +38,6 @@ public class Driver {
 
 		}while(true);
 
-
-
 		while(!matchOver) {
 
 			System.out.println(game.printBoard());
