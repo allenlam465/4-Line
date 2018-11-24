@@ -72,60 +72,68 @@ public class Driver {
 	}
 
 	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
-		Board tempGame = new Board();
-		tempGame = game;
-		int run = 0;
+            Board tempBoard = new Board();
+            tempBoard = game;
+            int run = 0;
 
-		System.out.println("\n" + tempGame.printBoard());
+            System.out.println("\n" + tempBoard.printBoard());
 
-		int v = MaxValue(tempGame, alpha, beta, depth);
+            int v = MaxValue(tempBoard, alpha, beta, depth);
 
-		return v; //return action
+            return v; //return action
 	}
 
-	static int MaxValue(Board state, int alpha, int beta, int depth) {
-		//if terminal test(state) then return utility(state)
-		if(state.checkDraw()) {
-			return 1;
-		}
-		else if(state.checkWin('O')) {
-			return Integer.MAX_VALUE;
-		}
-		else if(state.checkWin('X')){
-			return Integer.MIN_VALUE;
-		}
-		//cutoff at certain depth
-		if(depth < 3) {
-			depth++;
-			return state.evaluateBoard();
-		}
+	static int MaxValue(Board board, int alpha, int beta, int depth) {
+            //if terminal test(state) then return utility(state)
+            if(board.checkDraw()) {
+                    return 1;
+            }
+            else if(board.checkWin('O')) {
+                    return Integer.MAX_VALUE;
+            }
+            else if(board.checkWin('X')){
+                    return Integer.MIN_VALUE;
+            }
+            //cutoff at certain depth
+            if(depth < 3) {
+                    depth++;
+                    return board.evaluateBoard();
+            }
 
-		//v <- neg inf
-		int v = Integer.MIN_VALUE;
+            //v <- neg inf
+            int v = Integer.MIN_VALUE;
 
-		//go through all actions and update v, a, or accordingly
-		//call MaxValue again
+            //go through all actions and update v, a, or accordingly
+            //call MaxValue again
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    v = Math.max(v, MaxValue(board, alpha, beta, depth+1));
+                }
+            }
+                
+                
+                
 
-		return v;
+            return v;
 	}
 
-	static int MinValue(Board state, int alpha, int beta, int depth) {
+	static int MinValue(Board board, int alpha, int beta, int depth) {
 		int utility = 0;
 
 		//if terminal test(state) then return utility(state)
-		if(state.checkDraw()) {
+		if(board.checkDraw()) {
 			return 1;
 		}
-		else if(state.checkWin('O')) {
+		else if(board.checkWin('O')) {
 			return Integer.MAX_VALUE;
 		}
-		else if(state.checkWin('X')){
+		else if(board.checkWin('X')){
 			return Integer.MIN_VALUE;
 		}
 		//cutoff at certain depth
 		if(depth > 3) {
 			depth++;
-			return state.evaluateBoard();
+			return board.evaluateBoard();
 		}
 
 		//v <- pos inf
@@ -133,6 +141,12 @@ public class Driver {
 
 		//go through all actions and update v, a, or accordingly
 		//call MaxValue again
+                
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        v = Math.min(v, MaxValue(board, alpha, beta, depth+1));
+                    }
+                }
 
 		return v;
 	}
