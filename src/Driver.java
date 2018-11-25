@@ -11,7 +11,6 @@ public class Driver {
 		String input;
 		Board game = new Board();
 		Scanner s = new Scanner(System.in);
-		boolean matchOver = false;
 
 		int alpha = Integer.MIN_VALUE;
 		int beta  = Integer.MAX_VALUE;
@@ -43,8 +42,8 @@ public class Driver {
 
 		}while(true);
 
-		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
 
+		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
 			System.out.println(game.printBoard());
 
 			//ABP(game, currentPlayer, alpha, beta, depth);
@@ -57,8 +56,8 @@ public class Driver {
 					game.placePiece(currentPlayer);
 					System.out.println(game.evaluateBoard());
 				}
-				else 
-					System.out.println("Invalid move pick another move.");				
+				else
+					System.out.println("Invalid move pick another move.");
 
 			}while(game.validateMove(input));
 

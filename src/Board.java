@@ -127,6 +127,10 @@ public class Board {
 			if(board[x][y] == piece && valueItr < 3) {
 				evaluationScore += consecutiveValues[valueItr];
 				valueItr++;
+
+				if(valueItr == 2) {
+					evaluationScore += checkKillerMove(piece, x, y, horizontal, vertical);
+				}
 			}
 
 			if(board[x][y] != '-' && board[x][y] != piece) {
@@ -138,59 +142,48 @@ public class Board {
 		return evaluationScore;
 	}
 
-	private int checkKillerMove(char piece, int xPos, int yPos) {
-		int count = 0;
-		
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; j++) {
-				
-				if(board[i][j] == piece) {
-					
-					int row = i, col = j;
-					
-					//Horizontal Checker
-					while(board[row][col] == piece && col < N) {	
-						count++;
-						
-						if(count == 3) {
-							
-						}
-						col++;
-					}
-					
-					count = 0;
-					col = j;
-					
-					//Vertical checker
-					while(board[row][col] == piece && row < N) {	
-						count++;
-						
-						if(count == 3) {
-							
-						}
-						
-						row++;
-					}
-					
-					count = 0;
-				}
+	private int checkKillerMove(char piece, int xPos, int yPos, int horizontal, int vertical) {
+
+		int row = yPos, col = xPos;
+
+		System.out.println("ORIGINAL KILLER MOVE CHECK" + row + " " + col);
+
+		row += vertical;
+		col += horizontal;
+
+		System.out.println("BOTTOM/RIGHT KILLER MOVE CHECK" + row + " " + col);
+
+		if(	(row >= 0 && row < N) && 
+				(col >= 0 && col < N) &&
+				board[row][col] == '-') {
+			
+			row += vertical * -4;
+			col += horizontal * -4;
+
+			System.out.println("TOP/LEFT KILLER MOVE CHECK" + row + " " + col);
+
+			if(	(row >= 0 && row < N) && 
+					(col >= 0 && col < N) &&
+					board[row][col] == '-') {
+				return 10000;				
 			}
 		}
-		
+
 		return 0;
+
 	}
-	
+
 	public boolean checkWin(char piece) {
-		
+
 		int count = 0;
-		
+
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++) {
-				
+
 				if(board[i][j] == piece) {
-					
+
 					int row = i, col = j;
-					
+
 					//Horizontal Checker
 					while(board[row][col] == piece && col < N) {	
 						count++;
@@ -198,10 +191,10 @@ public class Board {
 							return true;
 						col++;
 					}
-					
+
 					count = 0;
 					col = j;
-					
+
 					//Vertical checker
 					while(board[row][col] == piece && row < N) {	
 						count++;
@@ -209,12 +202,12 @@ public class Board {
 							return true;
 						row++;
 					}
-					
+
 					count = 0;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
