@@ -5,12 +5,10 @@ public class Board {
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
-	private HashSet<Integer> availableMoves;    //keeps track of valid moves
-
+	
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
-		availableMoves = new HashSet<>();
 		initializeBoard();
 	}
 
@@ -77,7 +75,7 @@ public class Board {
 
 	public boolean emptyBoard() {
 		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; i++) {
+			for(int j = 0; j < N; j++) {
 				if(board[i][j] != '-')
 					return false;
 			}
@@ -146,12 +144,12 @@ public class Board {
 
 		int row = yPos, col = xPos;
 
-		System.out.println("ORIGINAL KILLER MOVE CHECK" + row + " " + col);
+		//System.out.println("ORIGINAL KILLER MOVE CHECK" + row + " " + col);
 
 		row += vertical;
 		col += horizontal;
 
-		System.out.println("BOTTOM/RIGHT KILLER MOVE CHECK" + row + " " + col);
+		//System.out.println("BOTTOM/RIGHT KILLER MOVE CHECK" + row + " " + col);
 
 		if(	(row >= 0 && row < N) && 
 				(col >= 0 && col < N) &&
@@ -160,7 +158,7 @@ public class Board {
 			row += vertical * -4;
 			col += horizontal * -4;
 
-			System.out.println("TOP/LEFT KILLER MOVE CHECK" + row + " " + col);
+			//System.out.println("TOP/LEFT KILLER MOVE CHECK" + row + " " + col);
 
 			if(	(row >= 0 && row < N) && 
 					(col >= 0 && col < N) &&
