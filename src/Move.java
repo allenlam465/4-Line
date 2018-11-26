@@ -5,7 +5,6 @@ public class Move {
 	
 	public Move(String move, int x, int y) {
 		this.move = move;
-		
 		this.x = x;
 		this.y = y;
 	}

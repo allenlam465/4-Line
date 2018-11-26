@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class Driver {
@@ -5,9 +6,10 @@ public class Driver {
 	public static void main(String[] args) {
 		menu();
 	}
+	
+	private static int currentPlayer;
 
 	private static void menu() {
-		int currentPlayer;
 		String input;
 		Board game = new Board();
 		Scanner s = new Scanner(System.in);
@@ -22,7 +24,7 @@ public class Driver {
 		//int time = Integer.parseInt(s.nextLine());
 		int time = 60;
 
-		do{
+		while(true){
 			System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
 
 			input = s.nextLine();
@@ -33,88 +35,107 @@ public class Driver {
 				break;
 			}
 			else if(input.equals("2")) {
-				currentPlayer = 2;
+				currentPlayer = -1;
 				System.out.println("\nOpponents goes first.");
 				break;
 			}
 			else
 				System.out.println("Invalid input.");
-
-		}while(true);
-
+		}
 
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
+			//ABP(game, currentPlayer, alpha, beta, depth);
 			System.out.println(game.printBoard());
 
-			//ABP(game, currentPlayer, alpha, beta, depth);
+			if(currentPlayer == 1) {
+				while(true){
+					System.out.print("\nInput Move \n>");
+					input = s.nextLine();
 
-			do{
-				System.out.print("\nInput Move \n>");
-				input = s.nextLine();
-
-				if(game.validateMove(input)) {
-					game.placePiece(currentPlayer);
-					System.out.println(game.evaluateBoard());
+					if(game.validateMove(input)) {
+						game.placePiece(currentPlayer);
+						System.out.println(game.printBoard());
+						System.out.println(game.evaluateBoard());
+						break;
+					}
+					else {
+						System.out.println("Invalid move pick another move.");
+					}
 				}
-				else
-					System.out.println("Invalid move pick another move.");
 
-			}while(game.validateMove(input));
+			}
+			else {
+				//AI WILL MOVE HERE
+				System.out.println("AI Moving...");
+				aiMove(game, 200, 5);
+			}
 
-			currentPlayer *= -1;
-
-			System.out.println(game.checkWin('X'));
-			System.out.println(game.checkWin('O'));
-
+			currentPlayer *= -1;	
+			//System.out.println(game.checkWin('X'));
+			//System.out.println(game.checkWin('O'));
 		}
 
 		s.close();
 	}
+	
+	//Add the Alpha-Beta Pruning/Minimax to this maybe
+	private static void aiMove(Board game, int time, int depthGoal) {
+		Random rand = new Random();
+		int row, col;
+		long startTime = System.currentTimeMillis();
+		
+		if(game.emptyBoard()) {
+			char x = (char)(rand.nextInt('F' - 'C') + 'C');
+			int y = rand.nextInt((6 - 3) + 1) + 3;
+			
+			String move = Character.toString(x) + Integer.toString(y);
+			System.out.println("AI Move: " + move);
+			game.validateMove(move);
+			game.placePiece(currentPlayer);
+		}
+	}
 
 	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
-            Board tempBoard = new Board();
-            tempBoard = game;
-            int run = 0;
+		Board tempBoard = new Board();
+		tempBoard = game;
+		int run = 0;
 
-            System.out.println("\n" + tempBoard.printBoard());
+		System.out.println("\n" + tempBoard.printBoard());
 
-            int v = MaxValue(tempBoard, alpha, beta, depth);
+		int v = MaxValue(tempBoard, alpha, beta, depth);
 
-            return v; //return action
+		return v; //return action
 	}
 
 	static int MaxValue(Board board, int alpha, int beta, int depth) {
-            //if terminal test(state) then return utility(state)
-            if(board.checkDraw()) {
-                    return 1;
-            }
-            else if(board.checkWin('O')) {
-                    return Integer.MAX_VALUE;
-            }
-            else if(board.checkWin('X')){
-                    return Integer.MIN_VALUE;
-            }
-            //cutoff at certain depth
-            if(depth < 3) {
-                    depth++;
-                    return board.evaluateBoard();
-            }
+		//if terminal test(state) then return utility(state)
+		if(board.checkDraw()) {
+			return 1;
+		}
+		else if(board.checkWin('O')) {
+			return Integer.MAX_VALUE;
+		}
+		else if(board.checkWin('X')){
+			return Integer.MIN_VALUE;
+		}
+		//cutoff at certain depth
+		if(depth < 3) {
+			depth++;
+			return board.evaluateBoard();
+		}
 
-            //v <- neg inf
-            int v = Integer.MIN_VALUE;
+		//v <- neg inf
+		int v = Integer.MIN_VALUE;
 
-            //go through all actions and update v, a, or accordingly
-            //call MaxValue again
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    v = Math.max(v, MaxValue(board, alpha, beta, depth+1));
-                }
-            }
-                
-                
-                
+		//go through all actions and update v, a, or accordingly
+		//call MaxValue again
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				v = Math.max(v, MaxValue(board, alpha, beta, depth+1));
+			}
+		}
 
-            return v;
+		return v;
 	}
 
 	static int MinValue(Board board, int alpha, int beta, int depth) {
@@ -141,12 +162,12 @@ public class Driver {
 
 		//go through all actions and update v, a, or accordingly
 		//call MaxValue again
-                
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        v = Math.min(v, MaxValue(board, alpha, beta, depth+1));
-                    }
-                }
+
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				v = Math.min(v, MaxValue(board, alpha, beta, depth+1));
+			}
+		}
 
 		return v;
 	}
