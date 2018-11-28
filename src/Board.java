@@ -5,10 +5,12 @@ public class Board {
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
+	private Set<String> possibleMoves;
 	
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
+		possibleMoves = new HashSet<>();
 		initializeBoard();
 	}
 
@@ -16,6 +18,8 @@ public class Board {
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++){
 				board[i][j] = '-';
+				char pos = Character.toUpperCase((char) (i + 65));
+				possibleMoves.add(Character.toString(pos) + Integer.toString(j + 1));
 			}
 		}
 	}
@@ -30,6 +34,10 @@ public class Board {
 
 	public LinkedList<Move> getMoveHistory(){
 		return moveHistory;
+	}
+	
+	public Set<String> getPossibleMoves(){
+		return possibleMoves;
 	}
 
 	public boolean validateMove(String move) {
@@ -61,6 +69,25 @@ public class Board {
 		else 
 			board[x][y] = 'O';
 	}
+	
+	public void placePiece(int player, int x, int y) {
+		
+		if(player == 1)
+			board[x][y] = 'X';
+		else 
+			board[x][y] = 'O';
+		
+	}
+	
+	public void removePreviousPiece() {
+		if(!moveHistory.isEmpty()) {		
+			Move remove = moveHistory.removeLast();
+			
+			int x = remove.getX(), y = remove.getY();
+			
+			board[x][y] = '-';
+		}
+	}
 
 	public boolean checkDraw() {
 		for(int i = 0; i < N; i++) {
@@ -91,17 +118,17 @@ public class Board {
 			for(int j = 0; j < N; j++) {
 				//UP, DOWN, RIGHT, LEFT
 				if(board[i][j] == 'X') {
-					evaluation += evaluatePieces('X', i, j, 0, 1);
+					//evaluation += evaluatePieces('X', i, j, 0, 1);
 					evaluation += evaluatePieces('X', i, j, 0, -1);
 					evaluation += evaluatePieces('X', i, j, 1, 0);
-					evaluation += evaluatePieces('X', i, j, -1, 0);
+					//evaluation += evaluatePieces('X', i, j, -1, 0);
 				}
 				//System.out.println("X EVALUATION: " + evaluation);
 				if(board[i][j] == 'O') {
-					evaluation -= evaluatePieces('O', i, j, 0, 1);
+					//evaluation -= evaluatePieces('O', i, j, 0, 1);
 					evaluation -= evaluatePieces('O', i, j, 0, -1);
 					evaluation -= evaluatePieces('O', i, j, 1, 0);
-					evaluation -= evaluatePieces('O', i, j, -1, 0);
+					//evaluation -= evaluatePieces('O', i, j, -1, 0);
 				}
 				//System.out.println("O EVALUATION: " + evaluation);
 			}
@@ -114,7 +141,7 @@ public class Board {
 		assert xPos >= 0 && xPos < N && yPos >= 0 && yPos < N;
 
 		int evaluationScore = 0, valueItr = 0;
-		int[] consecutiveValues = {10,100,1000};
+		int[] consecutiveValues = {10,100,100000};
 
 		for(
 				int x = xPos + horizontal, y = yPos + vertical;
@@ -131,12 +158,13 @@ public class Board {
 				}
 			}
 
-			if(board[x][y] != '-' && board[x][y] != piece) {
-				evaluationScore -= evaluationScore/2;
-			}
+//			if(board[x][y] != '-' && board[x][y] != piece) {
+//				evaluationScore -= evaluationScore/2;
+//			}
 
 		}
 
+		System.out.println(evaluationScore);
 		return evaluationScore;
 	}
 
@@ -163,7 +191,7 @@ public class Board {
 			if(	(row >= 0 && row < N) && 
 					(col >= 0 && col < N) &&
 					board[row][col] == '-') {
-				return 10000;				
+				return 1000000;				
 			}
 		}
 

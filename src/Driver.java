@@ -1,28 +1,30 @@
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Driver {
 
 	public static void main(String[] args) {
 		menu();
 	}
-	
+
 	private static int currentPlayer;
+	private static long timeLimit;
+	private static int alpha = Integer.MIN_VALUE;
+	private static int beta = Integer.MAX_VALUE;
+	private static int depthLimit = 6;
 
 	private static void menu() {
 		String input;
 		Board game = new Board();
 		Scanner s = new Scanner(System.in);
 
-		int alpha = Integer.MIN_VALUE;
-		int beta  = Integer.MAX_VALUE;
-		int depth = 3;
-
 		//System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
 
-		//int time = Integer.parseInt(s.nextLine());
-		int time = 60;
+		//time = Integer.parseInt(s.nextLine());
+		timeLimit = 25;
 
 		while(true){
 			System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
@@ -45,54 +47,109 @@ public class Driver {
 
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
 			//ABP(game, currentPlayer, alpha, beta, depth);
-			System.out.println(game.printBoard());
-
+			//System.out.println(game.printBoard());
 			if(currentPlayer == 1) {
 				while(true){
+					System.out.println(game.printBoard());
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
 
 					if(game.validateMove(input)) {
 						game.placePiece(currentPlayer);
-						System.out.println(game.printBoard());
 						System.out.println(game.evaluateBoard());
 						break;
 					}
 					else {
 						System.out.println("Invalid move pick another move.");
 					}
+//					currentPlayer *= -1;	
 				}
-
 			}
 			else {
 				//AI WILL MOVE HERE
-				System.out.println("AI Moving...");
-				aiMove(game, 200, 5);
+				System.out.println("AI Moving...\n");
+				aiMove(game, 60, 5);
 			}
-
+			
 			currentPlayer *= -1;	
-			//System.out.println(game.checkWin('X'));
-			//System.out.println(game.checkWin('O'));
+
 		}
 
 		s.close();
 	}
-	
+
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
 	private static void aiMove(Board game, int time, int depthGoal) {
 		Random rand = new Random();
 		int row, col;
 		long startTime = System.currentTimeMillis();
-		
+
+		//Randomness introduced at empty board
 		if(game.emptyBoard()) {
 			char x = (char)(rand.nextInt('F' - 'C') + 'C');
 			int y = rand.nextInt((6 - 3) + 1) + 3;
-			
+
 			String move = Character.toString(x) + Integer.toString(y);
 			System.out.println("AI Move: " + move);
+
 			game.validateMove(move);
 			game.placePiece(currentPlayer);
 		}
+		else {
+
+			int[] bestMove = minimax(game, currentPlayer, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+			Move aiMove = new Move(bestMove[1],bestMove[2]);
+
+			game.validateMove(aiMove.getMove());
+			game.placePiece(currentPlayer);
+		}
+	}
+
+	private static int[] minimax(Board game, int player, int depth, int alpha, int beta) {
+
+		Set<String> possibleMoves = game.getPossibleMoves();
+
+		int currentScore;
+		int bestRow = -1;
+		int bestCol = -1;
+
+		if(possibleMoves.isEmpty() || depthLimit == depth ) {
+			currentScore = game.evaluateBoard();
+			return new int[] {currentScore, bestRow, bestCol};				
+		}
+		else {
+			for(String pos : possibleMoves) {
+
+				Move possible = new Move(pos);
+				game.placePiece(player);
+
+				if (player == 1) {  
+					currentScore = minimax(game, player *= -1, depth+=1, alpha, beta)[0];
+					if (currentScore > alpha) {
+						alpha = currentScore;
+						bestCol = possible.getX();
+						bestRow = possible.getY();
+					}
+				} else {
+					currentScore = minimax(game, player *= -1, depth+=1, alpha, beta)[0];
+					if (currentScore < beta) {
+						beta = currentScore;
+						bestCol = possible.getX();
+						bestRow = possible.getY();
+					}
+				}
+
+				game.getBoard()[possible.getX()][possible.getY()] = '-';
+
+				if(alpha >= beta)
+					break;
+
+			}
+
+			return new int[] {(player == currentPlayer) ? alpha : beta, bestRow, bestCol};
+
+		}
+
 	}
 
 	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
@@ -100,7 +157,7 @@ public class Driver {
 		tempBoard = game;
 		int run = 0;
 
-		System.out.println("\n" + tempBoard.printBoard());
+		//System.out.println("\n" + tempBoard.printBoard());
 
 		int v = MaxValue(tempBoard, alpha, beta, depth);
 
