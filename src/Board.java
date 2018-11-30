@@ -52,8 +52,11 @@ public class Board {
 				y >= 0 && 
 				y < N && 
 				board[x][y] == '-') {
-			Move placed = new Move(move,x,y);
+			System.out.println(possibleMoves.size());
+			Move placed = new Move(move.toUpperCase(),x,y);
 			moveHistory.add(placed);
+			possibleMoves.remove(move.toUpperCase());
+			System.out.println(possibleMoves.size());
 			return true;
 		}
 

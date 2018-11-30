@@ -68,7 +68,7 @@ public class Driver {
 			else {
 				//AI WILL MOVE HERE
 				System.out.println("AI Moving...\n");
-				aiMove(game, 60, 5);
+				aiMove(game, timeLimit, 5);
 			}
 			
 			currentPlayer *= -1;	
@@ -79,7 +79,7 @@ public class Driver {
 	}
 
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, int time, int depthGoal) {
+	private static void aiMove(Board game, long time, int depthGoal) {
 		Random rand = new Random();
 		int row, col;
 		long startTime = System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class Driver {
 		}
 		else {
 			for(String pos : possibleMoves) {
-
+				
 				Move possible = new Move(pos);
 				game.placePiece(player);
 
