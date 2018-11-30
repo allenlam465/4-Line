@@ -67,7 +67,7 @@ public class Driver {
 			else {
 				//AI WILL MOVE HERE
 				System.out.println("AI Moving...");
-				aiMove(game, 200, 5);
+				aiMove(game, 200, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
 			}
 
 			currentPlayer *= -1;	
@@ -79,7 +79,7 @@ public class Driver {
 	}
 	
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, int time, int depthGoal) {
+	private static void aiMove(Board game, int time, int depthGoal, int alpha, int beta) {
 		Random rand = new Random();
 		int row, col;
 		long startTime = System.currentTimeMillis();
@@ -90,14 +90,14 @@ public class Driver {
 			
 			String move = Character.toString(x) + Integer.toString(y);
 			System.out.println("AI Move: " + move);
+                        //ABP(game, currentPlayer, alpha, beta, depthGoal);
 			game.validateMove(move);
 			game.placePiece(currentPlayer);
 		}
 	}
 
 	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depthGoal) {
-		Board tempBoard = new Board();
-		tempBoard = game;
+		Board tempBoard = game;
 		int run = 0;
 
 		System.out.println("\n" + tempBoard.printBoard());
