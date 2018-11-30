@@ -90,13 +90,13 @@ public class Driver {
 			
 			String move = Character.toString(x) + Integer.toString(y);
 			System.out.println("AI Move: " + move);
-                        //ABP(game, currentPlayer, alpha, beta, depthGoal);
+                        //ABP(game, alpha, beta, depthGoal);
 			game.validateMove(move);
 			game.placePiece(currentPlayer);
 		}
 	}
 
-	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depthGoal) {
+	static int ABP(Board game, int alpha, int beta, int depthGoal) {
 		Board tempBoard = game;
 		int run = 0;
 
