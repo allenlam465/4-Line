@@ -143,8 +143,7 @@ public class Board {
 	private int evaluatePieces(char piece, int xPos, int yPos, int horizontal, int vertical) {
 		assert xPos >= 0 && xPos < N && yPos >= 0 && yPos < N;
 
-		int evaluationScore = 0, valueItr = 0;
-		int[] consecutiveValues = {10,100,100000};
+		int evaluationScore = 1;
 
 		for(
 				int x = xPos + horizontal, y = yPos + vertical;
@@ -152,22 +151,26 @@ public class Board {
 				x += horizontal, y += vertical
 				) {
 
-			if(board[x][y] == piece && valueItr < 3) {
-				evaluationScore += consecutiveValues[valueItr];
-				valueItr++;
+			if(board[x][y] == piece) {
+				evaluationScore *= 10;
 
-				if(valueItr == 2) {
+				if(evaluationScore == 100) {
 					evaluationScore += checkKillerMove(piece, x, y, horizontal, vertical);
 				}
+				else if(evaluationScore == 1000) {
+					return evaluationScore;
+				}
 			}
-
-//			if(board[x][y] != '-' && board[x][y] != piece) {
-//				evaluationScore -= evaluationScore/2;
-//			}
+			else if(board[x][y] != '-' && board[x][y] != piece) {
+				return 0;
+			}
+			else {
+				evaluationScore += 1;
+			}
 
 		}
 
-		System.out.println(evaluationScore);
+		//System.out.println(evaluationScore);
 		return evaluationScore;
 	}
 
