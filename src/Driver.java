@@ -95,19 +95,19 @@ public class Driver {
 		}
 	}
 
-	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
+	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depthGoal) {
 		Board tempBoard = new Board();
 		tempBoard = game;
 		int run = 0;
 
 		System.out.println("\n" + tempBoard.printBoard());
 
-		int v = MaxValue(tempBoard, alpha, beta, depth);
+		int v = MaxValue(tempBoard, alpha, beta, depthGoal);
 
 		return v; //return action
 	}
 
-	static int MaxValue(Board board, int alpha, int beta, int depth) {
+	static int MaxValue(Board board, int alpha, int beta, int depthGoal) {
 		//if terminal test(state) then return utility(state)
 		if(board.checkDraw()) {
 			return 1;
@@ -119,8 +119,8 @@ public class Driver {
 			return Integer.MIN_VALUE;
 		}
 		//cutoff at certain depth
-		if(depth < 3) {
-			depth++;
+		if(depthGoal < 3) {
+			depthGoal++;
 			return board.evaluateBoard();
 		}
 
@@ -131,14 +131,14 @@ public class Driver {
 		//call MaxValue again
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				v = Math.max(v, MaxValue(board, alpha, beta, depth+1));
+				v = Math.max(v, MaxValue(board, alpha, beta, depthGoal+1));
 			}
 		}
 
 		return v;
 	}
 
-	static int MinValue(Board board, int alpha, int beta, int depth) {
+	static int MinValue(Board board, int alpha, int beta, int depthGoal) {
 		int utility = 0;
 
 		//if terminal test(state) then return utility(state)
@@ -152,8 +152,8 @@ public class Driver {
 			return Integer.MIN_VALUE;
 		}
 		//cutoff at certain depth
-		if(depth > 3) {
-			depth++;
+		if(depthGoal > 3) {
+			depthGoal++;
 			return board.evaluateBoard();
 		}
 
@@ -165,7 +165,7 @@ public class Driver {
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				v = Math.min(v, MaxValue(board, alpha, beta, depth+1));
+				v = Math.min(v, MaxValue(board, alpha, beta, depthGoal+1));
 			}
 		}
 
