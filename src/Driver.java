@@ -4,11 +4,11 @@ import java.util.Scanner;
 public class Driver {
 
 	public static void main(String[] args) {
-		menu();
+		//menu();
                 
-                //String test = "";
-                //test = convertMove(13);
-                //System.out.println(test);
+                String test = "";
+                test = convertMove(10);
+                System.out.println(test);
 	}
 	
 	private static int currentPlayer;
@@ -185,38 +185,46 @@ public class Driver {
             System.out.println("#: " + move);
             
             int firstDigit = Integer.parseInt(Integer.toString(move).substring(0, 1));
-            
-            int secondDigit = move%10;
+            int secondDigit = 0;
             
             System.out.println("digit 1: " + firstDigit);
-            System.out.println("digit 2: " + secondDigit);
             
-            if(firstDigit >= 0 && firstDigit <= 7) {
+            if(digits == 2) {
+                secondDigit = move%10;
+
+                System.out.println("digit 2: " + secondDigit);
+
+            }
+            
+            if(move >= 0 && move <= 7) {
                 sMove = "A";
             }
-            else if(firstDigit >= 8 && firstDigit <= 15) {
+            else if(move >= 8 && move <= 15) {
                 sMove = "B";
             }
-            else if(firstDigit >= 16 && firstDigit <= 23) {
+            else if(move >= 16 && move <= 23) {
                 sMove = "C";
             }
-            else if(firstDigit >= 24 && firstDigit <= 31) {
+            else if(move >= 24 && move <= 31) {
                 sMove = "D";
             }
-            else if(firstDigit >= 32 && firstDigit <= 39) {
+            else if(move >= 32 && move <= 39) {
                 sMove = "E";
             }
-            else if(firstDigit >= 40 && firstDigit <= 47) {
+            else if(move >= 40 && move <= 47) {
                 sMove = "F";
             }
-            else if(firstDigit >= 48 && firstDigit <= 55) {
+            else if(move >= 48 && move <= 55) {
                 sMove = "G";
             }
-            else if(firstDigit >= 56 && firstDigit <= 63) {
+            else if(move >= 56 && move <= 63) {
                 sMove = "H";
             }
             
-            sMove += Integer.toString(secondDigit);
+            if(digits == 2) {
+                move %= 7;
+                sMove += Integer.toString(move);
+            }
             
             return sMove;
         }
