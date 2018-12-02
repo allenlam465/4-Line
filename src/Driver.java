@@ -108,33 +108,32 @@ public class Driver {
 	}
 
 	static int ABP(Board game, int alpha, int beta, int depthGoal) {
-            Board tempBoard = game;
             int run = 0;
 
-            System.out.println("\n" + tempBoard.printBoard());
+            System.out.println("\n" + game.printBoard());
 
-            int v = MaxValue(tempBoard, alpha, beta, depthGoal);
+            int v = MaxValue(game, alpha, beta, depthGoal);
 
             return v; //return action
 	}
 
-	static int MaxValue(Board board, int alpha, int beta, int depthGoal) {
+	static int MaxValue(Board game, int alpha, int beta, int depthGoal) {
             int indexOfBestMove = -1;
             
             //if terminal test(state) then return utility(state)
-            if(board.checkDraw()) {
+            if(game.checkDraw()) {
                 return 1;
             }
-            else if(board.checkWin('O')) {
+            else if(game.checkWin('O')) {
                 return Integer.MAX_VALUE;
             }
-            else if(board.checkWin('X')){
+            else if(game.checkWin('X')){
                 return Integer.MIN_VALUE;
             }
             //cutoff at certain depth
             if(depthGoal < 5) {
                 depthGoal++;
-                return board.evaluateBoard();
+                return game.evaluateBoard();
             }
 
             //v <- neg inf
@@ -142,7 +141,8 @@ public class Driver {
 
             //go through all actions and update v, a, or b accordingly
             //call MaxValue again
-            for(Integer aMove : board.getAvailableMoves()) {
+            for(Integer iMove : game.getAvailableMoves()) {
+                Board tempBoard = game;
                 
             }
 

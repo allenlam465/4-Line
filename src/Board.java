@@ -287,10 +287,6 @@ public class Board {
             return movesAvailable;
         }
         
-        public void removeAvailableMove() {
-            
-        }
-        
         public void convertHistoryToAvailableMoves() {
             for(Move move : moveHistory) {
                 int iMove = 0;
