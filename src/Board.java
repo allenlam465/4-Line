@@ -245,28 +245,42 @@ public class Board {
                 String letter = sMove.substring(0, 1);
                 String number = sMove.substring(1, 2);
                 
-                if(letter == "A"){
-                    if(number == "1") {
-                        iMove += 0;
-                    } else if (number == "2") {
-                        iMove += 1;
-                    } else if (number == "3") {
-                        iMove += 2;
-                    } else if (number == "4") {
-                        iMove += 3;
-                    } else if (number == "5") {
-                        iMove += 4;
-                    } else if (number == "6") {
-                        iMove += 5;
-                    } else if (number == "7") {
-                        iMove += 6;
-                    } else if (number == "8") {
-                        iMove += 7;
-                    }
+                if(letter == "A") {
+                    iMove += 0;
+                } else if("B".equals(letter)) {
+                    iMove += 8;
+                } else if("C".equals(letter)) {
+                    iMove += 16;
+                } else if("D".equals(letter)) {
+                    iMove += 24;
+                } else if("E".equals(letter)) {
+                    iMove += 32;
+                } else if("F".equals(letter)) {
+                    iMove += 40;
+                } else if("G".equals(letter)) {
+                    iMove += 48;
+                } else if("H".equals(letter)) {
+                    iMove += 55;
                 }
+                
+                if("1".equals(number)) {
+                    iMove += 0;
+                } else if ("2".equals(number)) {
+                    iMove += 1;
+                } else if ("3".equals(number)) {
+                    iMove += 2;
+                } else if ("4".equals(number)) {
+                    iMove += 3;
+                } else if ("5".equals(number)) {
+                    iMove += 4;
+                } else if ("6".equals(number)) {
+                    iMove += 5;
+                } else if ("7".equals(number)) {
+                    iMove += 6;
+                } else if ("8".equals(number)) {
+                    iMove += 7;
+                }
+                movesAvailable.add(iMove);
             }
-        
-        
         }
-
 }
