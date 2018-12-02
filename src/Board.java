@@ -5,11 +5,15 @@ public class Board {
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
-        private HashSet<Integer> movesAvailable;
+        private ArrayList<Integer> movesAvailable;
 	
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
+                movesAvailable = new ArrayList<Integer>();
+                for(int i = 0; i < 56; i++) {
+                    movesAvailable.add(i);
+                }
 		initializeBoard();
 	}
 
@@ -34,6 +38,51 @@ public class Board {
 	}
 
 	public boolean validateMove(String move) {
+            
+            //---------------------------------------
+                int iMove = 0;
+                
+                String letter = move.substring(0, 1);
+                String number = move.substring(1, 2);
+                
+                if(letter == "A") {
+                    iMove += 0;
+                } else if("B".equals(letter)) {
+                    iMove += 8;
+                } else if("C".equals(letter)) {
+                    iMove += 16;
+                } else if("D".equals(letter)) {
+                    iMove += 24;
+                } else if("E".equals(letter)) {
+                    iMove += 32;
+                } else if("F".equals(letter)) {
+                    iMove += 40;
+                } else if("G".equals(letter)) {
+                    iMove += 48;
+                } else if("H".equals(letter)) {
+                    iMove += 55;
+                }
+                
+                if("1".equals(number)) {
+                    iMove += 0;
+                } else if ("2".equals(number)) {
+                    iMove += 1;
+                } else if ("3".equals(number)) {
+                    iMove += 2;
+                } else if ("4".equals(number)) {
+                    iMove += 3;
+                } else if ("5".equals(number)) {
+                    iMove += 4;
+                } else if ("6".equals(number)) {
+                    iMove += 5;
+                } else if ("7".equals(number)) {
+                    iMove += 6;
+                } else if ("8".equals(number)) {
+                    iMove += 7;
+                }
+                
+                //-----------------------------------------------------------------
+            
 		if(move.length() == 0 || (move.length() > 2 || move.length() == 1)) 
 			return false;
 
@@ -47,6 +96,7 @@ public class Board {
 				board[x][y] == '-') {
 			Move placed = new Move(move,x,y);
 			moveHistory.add(placed);
+                        movesAvailable.remove(Integer.valueOf(iMove));
                         
 			return true;
 		}
@@ -233,8 +283,12 @@ public class Board {
 		return pos;
 	}
         
-        public HashSet<Integer> getAvailableMoves() {
+        public ArrayList<Integer> getAvailableMoves() {
             return movesAvailable;
+        }
+        
+        public void removeAvailableMove() {
+            
         }
         
         public void convertHistoryToAvailableMoves() {
@@ -280,7 +334,14 @@ public class Board {
                 } else if ("8".equals(number)) {
                     iMove += 7;
                 }
-                movesAvailable.add(iMove);
+                
+                ArrayList<Integer> list = new ArrayList<Integer>();
+                
+                list.add(iMove);
+                
+                for(int x : list) {
+                    movesAvailable.remove(x);
+                }
             }
         }
 }
