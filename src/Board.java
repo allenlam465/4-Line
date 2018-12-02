@@ -5,6 +5,7 @@ public class Board {
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
+        private HashSet<Integer> movesAvailable;
 	
 	public Board() {
 		this.board = new char[N][N];
@@ -46,6 +47,7 @@ public class Board {
 				board[x][y] == '-') {
 			Move placed = new Move(move,x,y);
 			moveHistory.add(placed);
+                        
 			return true;
 		}
 
@@ -230,5 +232,41 @@ public class Board {
 		int pos = Character.toUpperCase(move.charAt(0)) - 65;
 		return pos;
 	}
+        
+        public HashSet<Integer> getAvailableMoves() {
+            return movesAvailable;
+        }
+        
+        public void convertHistoryToAvailableMoves() {
+            for(Move move : moveHistory) {
+                int iMove = 0;
+                String sMove = move.getMove();
+                
+                String letter = sMove.substring(0, 1);
+                String number = sMove.substring(1, 2);
+                
+                if(letter == "A"){
+                    if(number == "1") {
+                        iMove += 0;
+                    } else if (number == "2") {
+                        iMove += 1;
+                    } else if (number == "3") {
+                        iMove += 2;
+                    } else if (number == "4") {
+                        iMove += 3;
+                    } else if (number == "5") {
+                        iMove += 4;
+                    } else if (number == "6") {
+                        iMove += 5;
+                    } else if (number == "7") {
+                        iMove += 6;
+                    } else if (number == "8") {
+                        iMove += 7;
+                    }
+                }
+            }
+        
+        
+        }
 
 }
