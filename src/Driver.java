@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class Driver {
 
 					if(game.validateMove(input)) {
 						game.placePiece(currentPlayer);
-						System.out.println(game.evaluateBoard());
+						System.out.println(game.evaluateBoard(currentPlayer));
 						break;
 					}
 					else {
@@ -114,7 +113,7 @@ public class Driver {
 		int bestCol = -1;
 
 		if(possibleMoves.isEmpty() || depthLimit == depth ) {
-			currentScore = game.evaluateBoard();
+			currentScore = game.evaluateBoard(player);
 			return new int[] {currentScore, bestRow, bestCol};				
 		}
 		else {
@@ -152,19 +151,19 @@ public class Driver {
 
 	}
 
-	static int ABP(Board game, int currentPlayer, int alpha, int beta, int depth) {
+	static int ABP(Board game, int player, int alpha, int beta, int depth) {
 		Board tempBoard = new Board();
 		tempBoard = game;
 		int run = 0;
 
 		//System.out.println("\n" + tempBoard.printBoard());
 
-		int v = MaxValue(tempBoard, alpha, beta, depth);
+		int v = MaxValue(tempBoard, currentPlayer, alpha, beta, depth);
 
 		return v; //return action
 	}
 
-	static int MaxValue(Board board, int alpha, int beta, int depth) {
+	static int MaxValue(Board board, int player, int alpha, int beta, int depth) {
 		//if terminal test(state) then return utility(state)
 		if(board.checkDraw()) {
 			return 1;
@@ -178,7 +177,7 @@ public class Driver {
 		//cutoff at certain depth
 		if(depth < 3) {
 			depth++;
-			return board.evaluateBoard();
+			return board.evaluateBoard(player);
 		}
 
 		//v <- neg inf
@@ -188,14 +187,14 @@ public class Driver {
 		//call MaxValue again
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				v = Math.max(v, MaxValue(board, alpha, beta, depth+1));
+				v = Math.max(v, MaxValue(board, player, alpha, beta, depth+1));
 			}
 		}
 
 		return v;
 	}
 
-	static int MinValue(Board board, int alpha, int beta, int depth) {
+	static int MinValue(Board board, int player, int alpha, int beta, int depth) {
 		int utility = 0;
 
 		//if terminal test(state) then return utility(state)
@@ -211,7 +210,7 @@ public class Driver {
 		//cutoff at certain depth
 		if(depth > 3) {
 			depth++;
-			return board.evaluateBoard();
+			return board.evaluateBoard(player);
 		}
 
 		//v <- pos inf
@@ -222,7 +221,7 @@ public class Driver {
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				v = Math.min(v, MaxValue(board, alpha, beta, depth+1));
+				v = Math.min(v, MaxValue(board, player, alpha, beta, depth+1));
 			}
 		}
 

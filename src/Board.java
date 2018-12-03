@@ -1,5 +1,7 @@
 import java.util.*;
 
+//CHEATSHEET BOTH SIDES ON FINAL
+
 public class Board {
 
 	private int N = 8;
@@ -52,7 +54,6 @@ public class Board {
 				y >= 0 && 
 				y < N && 
 				board[x][y] == '-') {
-			System.out.println(possibleMoves.size());
 			Move placed = new Move(move.toUpperCase(),x,y);
 			moveHistory.add(placed);
 			possibleMoves.remove(move.toUpperCase());
@@ -73,6 +74,7 @@ public class Board {
 			board[x][y] = 'O';
 	}
 	
+	//Used for the minimax testing placement
 	public void placePiece(int player, int x, int y) {
 		
 		if(player == 1)
@@ -114,41 +116,43 @@ public class Board {
 		return true;
 	}
 
-	public int evaluateBoard() {
+	public int evaluateBoard(int currentPlayer) {
 		int evaluation = 0;
 
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++) {
 				//UP, DOWN, RIGHT, LEFT
-				if(board[i][j] == 'X') {
-					//evaluation += evaluatePieces('X', i, j, 0, 1);
+				if(board[i][j] == 'X' && currentPlayer == 1) {
 					evaluation += evaluatePieces('X', i, j, 0, -1);
 					evaluation += evaluatePieces('X', i, j, 1, 0);
-					//evaluation += evaluatePieces('X', i, j, -1, 0);
 				}
-				//System.out.println("X EVALUATION: " + evaluation);
-				if(board[i][j] == 'O') {
-					//evaluation -= evaluatePieces('O', i, j, 0, 1);
+				else if(board[i][j] == 'O' && currentPlayer == -1) {
 					evaluation -= evaluatePieces('O', i, j, 0, -1);
 					evaluation -= evaluatePieces('O', i, j, 1, 0);
-					//evaluation -= evaluatePieces('O', i, j, -1, 0);
 				}
+				//System.out.println("X EVALUATION: " + evaluation);
+//				if(board[i][j] == 'O') {
+//					evaluation -= evaluatePieces('O', i, j, 0, -1);
+//					evaluation -= evaluatePieces('O', i, j, 1, 0);
+//				}
 				//System.out.println("O EVALUATION: " + evaluation);
 			}
 		}
 
 		return evaluation;
 	}
+	
 
+	//SHOULD JUST CHECK FOR 4 POS INSTEAD OF WHOLE COL/ROW
 	private int evaluatePieces(char piece, int xPos, int yPos, int horizontal, int vertical) {
 		assert xPos >= 0 && xPos < N && yPos >= 0 && yPos < N;
 
 		int evaluationScore = 1;
 
 		for(
-				int x = xPos + horizontal, y = yPos + vertical;
-				(x >= 0 && x < N) && (y >= 0 && y < N);
-				x += horizontal, y += vertical
+				int x = xPos + horizontal, y = yPos + vertical, i = 0;
+				(x >= 0 && x < N) && (y >= 0 && y < N) && (i < 4);
+				x += horizontal, y += vertical, i++
 				) {
 
 			if(board[x][y] == piece) {
