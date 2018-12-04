@@ -14,7 +14,6 @@ public class Driver {
 	private static long timeLimit;
 	private static int alpha = Integer.MIN_VALUE;
 	private static int beta = Integer.MAX_VALUE;
-	private static int depthLimit = 6;
 
 	private static void menu() {
 		String input;
@@ -69,7 +68,7 @@ public class Driver {
 			else {
 				//AI WILL MOVE HERE
 				System.out.println("AI Moving...\n");
-				aiMove(game, timeLimit, 5);
+				aiMove(game, timeLimit, 6);
 			}
 
 			//System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
@@ -81,7 +80,7 @@ public class Driver {
 	}
 
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, long time, int depthGoal) {
+	private static void aiMove(Board game, long time, int depth) {
 		Random rand = new Random();
 		long startTime = System.currentTimeMillis();
 
@@ -97,7 +96,7 @@ public class Driver {
 			game.placePiece(currentPlayer);
 		}
 		else {
-			Object[] bestMove = minimax(game, currentPlayer, 0, alpha, beta );
+			Object[] bestMove = minimax(game, currentPlayer, depth, alpha, beta );
 			System.out.println("Out of loop");			
 			Move aiMove = new Move((String)bestMove[1]);
 			
@@ -112,12 +111,14 @@ public class Driver {
 		ArrayList<String> moveList;
 		Set<String> possibleMoves = new HashSet<>();
 		ArrayList<String> playerMoves =  game.currentPlayerMoves(player*-1);
+		//System.out.println("Player Moves Made " + playerMoves.size());
 
 		for(int i = 0; i < playerMoves.size(); i++) {
 			possibleMoves.addAll(game.adjacencyCheck(playerMoves.get(i)));
-		}		
-		//System.out.println("POSSIBLE MOVES" + possibleMoves.size());
-
+		}
+		
+		possibleMoves.retainAll(game.getEmptySpace());
+		
 		if(possibleMoves.isEmpty()) {
 			moveList = new ArrayList<>(game.getEmptySpace());			
 		}
@@ -125,26 +126,29 @@ public class Driver {
 			moveList = new ArrayList<>(possibleMoves);			
 		}
 
-		int currentScore = 0, bestScore;
+		int currentScore, bestScore;
+		Object[] temp;
 		String bestMove = "";
 
-		if(depth == depthLimit) {
-			//System.out.println("DONE REACHED  DEPTH");
-			Object[] x = {game.evaluateBoard(player), moveList.get(0)};
-			return x;
+		if(depth == 0) {
+			System.out.println("DONE REACHED DEPTH");
+			Object[] moveSet = {game.evaluateBoard(player), moveList.get(0)};
+			for(Object x : moveSet) {
+				System.out.println(x);
+			}
+			return moveSet;
 		}
 
 		bestScore = alpha;
 
 		//Add timer here
 		while(moveList.size() > 0) {
-			System.out.println(moveList.size());
 			Board testBoard = new Board(game);
 			String newMove = moveList.get(0);
 
-			testBoard.placePiece(player, newMove);
+			testBoard.placePiece(player*=-1, newMove);
 			//System.out.println(testBoard.printBoard());
-			Object[] temp = minimax(testBoard, player*=-1, depth+1, alpha, -bestScore );
+			temp = minimax(testBoard, player*=-1, depth-1, -beta, -bestScore );
 			currentScore = -(Integer)temp[0];
 
 			if(currentScore > bestScore) {
@@ -156,9 +160,9 @@ public class Driver {
 				Object[] x = {bestScore, bestMove};
 				return x;
 			}
-			moveList.remove(0);
-			System.out.println("Stuck");
+			System.out.println(moveList.remove(0));
 		}
+	
 		Object[] x = {bestScore, bestMove};
 		return x;
 	}

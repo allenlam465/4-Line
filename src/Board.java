@@ -17,7 +17,13 @@ public class Board {
 	}
 	
 	public Board(Board board) {
-		this.board = board.getBoard();
+		this.board = new char[N][N];
+		
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				this.board[i][j] = board.getBoard()[i][j];
+			}
+		}
 	}
 
 	private void initializeBoard() {
@@ -80,10 +86,14 @@ public class Board {
 	//Used for the minimax testing placement
 	public void placePiece(int player, int x, int y) {
 		
+		Move move = new Move(x,y);
+		
 		if(player == 1)
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
+		
+		possibleMoves.remove(move.getMove());
 		
 	}
 	
@@ -119,14 +129,14 @@ public class Board {
 					String move = Character.toString(pos) + Integer.toString(j + 1);
 					movesMade.add(move);
 				}
-				else if ( player != 1 && board[i][j] == 'O') {
+				if ( player != 1 && board[i][j] == 'O') {
 					char pos = Character.toUpperCase((char) (i + 65));
 					String move = Character.toString(pos) + Integer.toString(j + 1);
 					movesMade.add(move);
 				}
 			}
 		}
-		
+				
 		return movesMade;
 		
 	}
@@ -190,8 +200,9 @@ public class Board {
 	
 	Set<String> getEmptySpace(){
 		Set<String> emptySpace = new HashSet<>();
+		
 		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; i++) {
+			for(int j = 0; j < N; j++) {
 				Move move = new Move(i, j);
 				emptySpace.add(move.getMove());
 			}
