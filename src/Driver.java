@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
@@ -46,10 +48,10 @@ public class Driver {
 
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
 			//ABP(game, currentPlayer, alpha, beta, depth);
-			//System.out.println(game.printBoard());
+			System.out.println(game.printBoard());
 			if(currentPlayer == 1) {
 				while(true){
-					System.out.println(game.printBoard());
+					//System.out.println(game.printBoard());
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
 
@@ -61,7 +63,7 @@ public class Driver {
 					else {
 						System.out.println("Invalid move pick another move.");
 					}
-//					currentPlayer *= -1;	
+					//					currentPlayer *= -1;	
 				}
 			}
 			else {
@@ -69,7 +71,8 @@ public class Driver {
 				System.out.println("AI Moving...\n");
 				aiMove(game, timeLimit, 5);
 			}
-			
+
+			//System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
 			currentPlayer *= -1;	
 
 		}
@@ -80,7 +83,6 @@ public class Driver {
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
 	private static void aiMove(Board game, long time, int depthGoal) {
 		Random rand = new Random();
-		int row, col;
 		long startTime = System.currentTimeMillis();
 
 		//Randomness introduced at empty board
@@ -95,138 +97,70 @@ public class Driver {
 			game.placePiece(currentPlayer);
 		}
 		else {
-
-			int[] bestMove = minimax(game, currentPlayer, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-			Move aiMove = new Move(bestMove[1],bestMove[2]);
+			Object[] bestMove = minimax(game, currentPlayer, 0, alpha, beta );
+			System.out.println("Out of loop");			
+			Move aiMove = new Move((String)bestMove[1]);
+			
+			System.out.println(aiMove.getMove());
 
 			game.validateMove(aiMove.getMove());
 			game.placePiece(currentPlayer);
 		}
 	}
 
-	private static int[] minimax(Board game, int player, int depth, int alpha, int beta) {
+	private static Object[] minimax(Board game, int player, int depth, int alpha, int beta) {
+		ArrayList<String> moveList;
+		Set<String> possibleMoves = new HashSet<>();
+		ArrayList<String> playerMoves =  game.currentPlayerMoves(player*-1);
 
-		Set<String> possibleMoves = game.getPossibleMoves();
+		for(int i = 0; i < playerMoves.size(); i++) {
+			possibleMoves.addAll(game.adjacencyCheck(playerMoves.get(i)));
+		}		
+		//System.out.println("POSSIBLE MOVES" + possibleMoves.size());
 
-		int currentScore;
-		int bestRow = -1;
-		int bestCol = -1;
-
-		if(possibleMoves.isEmpty() || depthLimit == depth ) {
-			currentScore = game.evaluateBoard(player);
-			return new int[] {currentScore, bestRow, bestCol};				
+		if(possibleMoves.isEmpty()) {
+			moveList = new ArrayList<>(game.getEmptySpace());			
 		}
 		else {
-			for(String pos : possibleMoves) {
-				
-				Move possible = new Move(pos);
-				game.placePiece(player);
+			moveList = new ArrayList<>(possibleMoves);			
+		}
 
-				if (player == 1) {  
-					currentScore = minimax(game, player *= -1, depth+=1, alpha, beta)[0];
-					if (currentScore > alpha) {
-						alpha = currentScore;
-						bestCol = possible.getX();
-						bestRow = possible.getY();
-					}
-				} else {
-					currentScore = minimax(game, player *= -1, depth+=1, alpha, beta)[0];
-					if (currentScore < beta) {
-						beta = currentScore;
-						bestCol = possible.getX();
-						bestRow = possible.getY();
-					}
-				}
+		int currentScore = 0, bestScore;
+		String bestMove = "";
 
-				game.getBoard()[possible.getX()][possible.getY()] = '-';
+		if(depth == depthLimit) {
+			//System.out.println("DONE REACHED  DEPTH");
+			Object[] x = {game.evaluateBoard(player), moveList.get(0)};
+			return x;
+		}
 
-				if(alpha >= beta)
-					break;
+		bestScore = alpha;
 
+		//Add timer here
+		while(moveList.size() > 0) {
+			System.out.println(moveList.size());
+			Board testBoard = new Board(game);
+			String newMove = moveList.get(0);
+
+			testBoard.placePiece(player, newMove);
+			//System.out.println(testBoard.printBoard());
+			Object[] temp = minimax(testBoard, player*=-1, depth+1, alpha, -bestScore );
+			currentScore = -(Integer)temp[0];
+
+			if(currentScore > bestScore) {
+				bestScore = currentScore;
+				bestMove = newMove;
 			}
-
-			return new int[] {(player == currentPlayer) ? alpha : beta, bestRow, bestCol};
-
-		}
-
-	}
-
-	static int ABP(Board game, int player, int alpha, int beta, int depth) {
-		Board tempBoard = new Board();
-		tempBoard = game;
-		int run = 0;
-
-		//System.out.println("\n" + tempBoard.printBoard());
-
-		int v = MaxValue(tempBoard, currentPlayer, alpha, beta, depth);
-
-		return v; //return action
-	}
-
-	static int MaxValue(Board board, int player, int alpha, int beta, int depth) {
-		//if terminal test(state) then return utility(state)
-		if(board.checkDraw()) {
-			return 1;
-		}
-		else if(board.checkWin('O')) {
-			return Integer.MAX_VALUE;
-		}
-		else if(board.checkWin('X')){
-			return Integer.MIN_VALUE;
-		}
-		//cutoff at certain depth
-		if(depth < 3) {
-			depth++;
-			return board.evaluateBoard(player);
-		}
-
-		//v <- neg inf
-		int v = Integer.MIN_VALUE;
-
-		//go through all actions and update v, a, or accordingly
-		//call MaxValue again
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				v = Math.max(v, MaxValue(board, player, alpha, beta, depth+1));
+			if(bestScore > currentScore) {
+				//System.out.println("PRUNED");
+				Object[] x = {bestScore, bestMove};
+				return x;
 			}
+			moveList.remove(0);
+			System.out.println("Stuck");
 		}
-
-		return v;
+		Object[] x = {bestScore, bestMove};
+		return x;
 	}
-
-	static int MinValue(Board board, int player, int alpha, int beta, int depth) {
-		int utility = 0;
-
-		//if terminal test(state) then return utility(state)
-		if(board.checkDraw()) {
-			return 1;
-		}
-		else if(board.checkWin('O')) {
-			return Integer.MAX_VALUE;
-		}
-		else if(board.checkWin('X')){
-			return Integer.MIN_VALUE;
-		}
-		//cutoff at certain depth
-		if(depth > 3) {
-			depth++;
-			return board.evaluateBoard(player);
-		}
-
-		//v <- pos inf
-		int v = Integer.MAX_VALUE;
-
-		//go through all actions and update v, a, or accordingly
-		//call MaxValue again
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				v = Math.min(v, MaxValue(board, player, alpha, beta, depth+1));
-			}
-		}
-
-		return v;
-	}
-
 
 }

@@ -15,6 +15,10 @@ public class Board {
 		possibleMoves = new HashSet<>();
 		initializeBoard();
 	}
+	
+	public Board(Board board) {
+		this.board = board.getBoard();
+	}
 
 	private void initializeBoard() {
 		for(int i = 0; i < N; i++) {
@@ -56,8 +60,7 @@ public class Board {
 				board[x][y] == '-') {
 			Move placed = new Move(move.toUpperCase(),x,y);
 			moveHistory.add(placed);
-			possibleMoves.remove(move.toUpperCase());
-			System.out.println(possibleMoves.size());
+			possibleMoves.remove(move);
 			return true;
 		}
 
@@ -84,6 +87,17 @@ public class Board {
 		
 	}
 	
+	public void placePiece(int player, String move) {
+		Move placed = new Move(move);
+		int x = placed.getX(), y = placed.getY();
+		
+		if(player == 1)
+			board[x][y] = 'X';
+		else 
+			board[x][y] = 'O';
+		
+	}
+	
 	public void removePreviousPiece() {
 		if(!moveHistory.isEmpty()) {		
 			Move remove = moveHistory.removeLast();
@@ -93,6 +107,100 @@ public class Board {
 			board[x][y] = '-';
 		}
 	}
+	
+	public ArrayList<String> currentPlayerMoves(int player){
+		
+		ArrayList<String> movesMade = new ArrayList<>();
+		
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(player == 1 && board[i][j] == 'X') {
+					char pos = Character.toUpperCase((char) (i + 65));
+					String move = Character.toString(pos) + Integer.toString(j + 1);
+					movesMade.add(move);
+				}
+				else if ( player != 1 && board[i][j] == 'O') {
+					char pos = Character.toUpperCase((char) (i + 65));
+					String move = Character.toString(pos) + Integer.toString(j + 1);
+					movesMade.add(move);
+				}
+			}
+		}
+		
+		return movesMade;
+		
+	}
+	
+	public ArrayList<String> adjacencyCheck(String pos) {
+		
+		ArrayList<String> adjacentAvalible = new ArrayList<String>();
+		String checking = "";
+		Move move = new Move(pos);
+		
+		int x = move.getX();
+		int y = move.getY();
+		char posi;
+		
+		//UP
+		if(x - 1 >= 0) {
+			//System.out.println((x - 1) + " " + y);
+			if(board[x - 1][y] == '-') {
+				posi = Character.toUpperCase((char) ((x-1) + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 1);
+				//System.out.println(checking);
+				adjacentAvalible.add(checking);
+			}
+		}
+		
+		//DOWN
+		if(x + 1 < N) {
+			//System.out.println((x + 1) + " " + y);
+			if(board[x + 1][y] == '-') {
+				posi = Character.toUpperCase((char) ((x+1) + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 1);getClass();
+				//System.out.println(checking);
+				adjacentAvalible.add(checking);
+			}
+		}
+		
+		//LEFT
+		if(y - 1 >= 0) {
+			//System.out.println(x + " " + (y - 1));
+			if(board[x][y - 1] == '-') {
+				posi = Character.toUpperCase((char) (x + 65));
+				checking = Character.toString(posi) + Integer.toString(y);
+				//System.out.println(checking);
+				adjacentAvalible.add(checking);
+			}
+		}
+		
+		//RIGHT
+		if(y + 1 < N) {
+			//System.out.println(x + " " + (y + 1));
+			if(board[x][y + 1] == '-') {
+				posi = Character.toUpperCase((char) (x + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 2);
+				//System.out.println(checking);
+				adjacentAvalible.add(checking);
+			}
+		}
+		//Look at adjacent pieces moves
+		return adjacentAvalible;
+	}
+	
+	Set<String> getEmptySpace(){
+		Set<String> emptySpace = new HashSet<>();
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; i++) {
+				Move move = new Move(i, j);
+				emptySpace.add(move.getMove());
+			}
+		}
+		
+		return emptySpace;
+	}
+	
+	
 
 	public boolean checkDraw() {
 		for(int i = 0; i < N; i++) {
