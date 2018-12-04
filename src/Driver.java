@@ -110,7 +110,7 @@ public class Driver {
 	static int ABP(Board game, int alpha, int beta, int depthGoal) {
             int run = 0;
 
-            System.out.println("\n" + game.printBoard());
+            //System.out.println("\n" + game.printBoard());
 
             int v = MaxValue(game, alpha, beta, depthGoal);
 
@@ -144,6 +144,8 @@ public class Driver {
             for(Integer iMove : game.getAvailableMoves()) {
                 Board tempBoard = game;
                 
+                v = Math.max(v, MinValue(tempBoard, alpha, beta, depthGoal));
+                
             }
 
             return v;
@@ -174,11 +176,6 @@ public class Driver {
 		//go through all actions and update v, a, or b accordingly
 		//call MaxValue again
 
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				v = Math.min(v, MaxValue(board, alpha, beta, depthGoal+1));
-			}
-		}
 
 		return v;
 	}
