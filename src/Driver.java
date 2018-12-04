@@ -21,7 +21,7 @@ public class Driver {
 		Board game = new Board();
 		Scanner s = new Scanner(System.in);
 
-		//System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
+		System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
 
 		//time = Integer.parseInt(s.nextLine());
@@ -47,7 +47,6 @@ public class Driver {
 		}
 
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
-			//ABP(game, currentPlayer, alpha, beta, depth);
 			System.out.println(game.printBoard());
 			if(currentPlayer == 1) {
 				while(true){
@@ -63,16 +62,15 @@ public class Driver {
 					else {
 						System.out.println("Invalid move pick another move.");
 					}
-					//					currentPlayer *= -1;	
 				}
 			}
 			else {
-				//AI WILL MOVE HERE
 				System.out.println("AI Moving...\n");
 				aiMove(game, timeLimit, 5);
+				
 			}
 
-			//System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
+			System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
 			currentPlayer *= -1;	
 
 		}
@@ -116,7 +114,6 @@ public class Driver {
 		for(int i = 0; i < playerMoves.size(); i++) {
 			possibleMoves.addAll(game.adjacencyCheck(playerMoves.get(i)));
 		}		
-		//System.out.println("POSSIBLE MOVES" + possibleMoves.size());
 
 		if(possibleMoves.isEmpty()) {
 			moveList = new ArrayList<>(game.getEmptySpace());			
@@ -129,21 +126,18 @@ public class Driver {
 		String bestMove = "";
 
 		if(depth == depthLimit) {
-			//System.out.println("DONE REACHED  DEPTH");
 			Object[] x = {game.evaluateBoard(player), moveList.get(0)};
 			return x;
 		}
 
 		bestScore = alpha;
 
-		//Add timer here
 		while(moveList.size() > 0) {
 			System.out.println(moveList.size());
 			Board testBoard = new Board(game);
 			String newMove = moveList.get(0);
 
 			testBoard.placePiece(player, newMove);
-			//System.out.println(testBoard.printBoard());
 			Object[] temp = minimax(testBoard, player*=-1, depth+1, alpha, -bestScore );
 			currentScore = -(Integer)temp[0];
 

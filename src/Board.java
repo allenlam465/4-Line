@@ -8,16 +8,24 @@ public class Board {
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
 	private Set<String> possibleMoves;
-	
+
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
 		possibleMoves = new HashSet<>();
 		initializeBoard();
 	}
-	
+
 	public Board(Board board) {
-		this.board = board.getBoard();
+		this.board = new char[N][N];
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++){
+				
+				this.board[i][j] = board.getBoard()[i][j];
+
+			}
+		}
+
 	}
 
 	private void initializeBoard() {
@@ -41,7 +49,7 @@ public class Board {
 	public LinkedList<Move> getMoveHistory(){
 		return moveHistory;
 	}
-	
+
 	public Set<String> getPossibleMoves(){
 		return possibleMoves;
 	}
@@ -76,42 +84,42 @@ public class Board {
 		else 
 			board[x][y] = 'O';
 	}
-	
+
 	//Used for the minimax testing placement
 	public void placePiece(int player, int x, int y) {
-		
+
 		if(player == 1)
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
-		
+
 	}
-	
+
 	public void placePiece(int player, String move) {
 		Move placed = new Move(move);
 		int x = placed.getX(), y = placed.getY();
-		
+
 		if(player == 1)
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
-		
+
 	}
-	
+
 	public void removePreviousPiece() {
 		if(!moveHistory.isEmpty()) {		
 			Move remove = moveHistory.removeLast();
-			
+
 			int x = remove.getX(), y = remove.getY();
-			
+
 			board[x][y] = '-';
 		}
 	}
-	
+
 	public ArrayList<String> currentPlayerMoves(int player){
-		
+
 		ArrayList<String> movesMade = new ArrayList<>();
-		
+
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++) {
 				if(player == 1 && board[i][j] == 'X') {
@@ -126,21 +134,21 @@ public class Board {
 				}
 			}
 		}
-		
+
 		return movesMade;
-		
+
 	}
-	
+
 	public ArrayList<String> adjacencyCheck(String pos) {
-		
+
 		ArrayList<String> adjacentAvalible = new ArrayList<String>();
 		String checking = "";
 		Move move = new Move(pos);
-		
+
 		int x = move.getX();
 		int y = move.getY();
 		char posi;
-		
+
 		//UP
 		if(x - 1 >= 0) {
 			//System.out.println((x - 1) + " " + y);
@@ -151,7 +159,7 @@ public class Board {
 				adjacentAvalible.add(checking);
 			}
 		}
-		
+
 		//DOWN
 		if(x + 1 < N) {
 			//System.out.println((x + 1) + " " + y);
@@ -162,7 +170,7 @@ public class Board {
 				adjacentAvalible.add(checking);
 			}
 		}
-		
+
 		//LEFT
 		if(y - 1 >= 0) {
 			//System.out.println(x + " " + (y - 1));
@@ -173,7 +181,7 @@ public class Board {
 				adjacentAvalible.add(checking);
 			}
 		}
-		
+
 		//RIGHT
 		if(y + 1 < N) {
 			//System.out.println(x + " " + (y + 1));
@@ -187,20 +195,20 @@ public class Board {
 		//Look at adjacent pieces moves
 		return adjacentAvalible;
 	}
-	
+
 	Set<String> getEmptySpace(){
 		Set<String> emptySpace = new HashSet<>();
 		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; i++) {
+			for(int j = 0; j < N; j++) {
 				Move move = new Move(i, j);
 				emptySpace.add(move.getMove());
 			}
 		}
-		
+
 		return emptySpace;
 	}
-	
-	
+
+
 
 	public boolean checkDraw() {
 		for(int i = 0; i < N; i++) {
@@ -239,17 +247,17 @@ public class Board {
 					evaluation -= evaluatePieces('O', i, j, 1, 0);
 				}
 				//System.out.println("X EVALUATION: " + evaluation);
-//				if(board[i][j] == 'O') {
-//					evaluation -= evaluatePieces('O', i, j, 0, -1);
-//					evaluation -= evaluatePieces('O', i, j, 1, 0);
-//				}
+				//				if(board[i][j] == 'O') {
+				//					evaluation -= evaluatePieces('O', i, j, 0, -1);
+				//					evaluation -= evaluatePieces('O', i, j, 1, 0);
+				//				}
 				//System.out.println("O EVALUATION: " + evaluation);
 			}
 		}
 
 		return evaluation;
 	}
-	
+
 
 	//SHOULD JUST CHECK FOR 4 POS INSTEAD OF WHOLE COL/ROW
 	private int evaluatePieces(char piece, int xPos, int yPos, int horizontal, int vertical) {
@@ -300,7 +308,7 @@ public class Board {
 		if(	(row >= 0 && row < N) && 
 				(col >= 0 && col < N) &&
 				board[row][col] == '-') {
-			
+
 			row += vertical * -4;
 			col += horizontal * -4;
 
@@ -328,19 +336,22 @@ public class Board {
 
 					int row = i, col = j;
 
+
+
 					//Horizontal Checker
-					while(board[row][col] == piece && col < N) {	
+					while(col < N && board[row][col] == piece) {	
 						count++;
 						if(count == 4)
 							return true;
 						col++;
+						System.out.println(col);
 					}
 
 					count = 0;
 					col = j;
 
 					//Vertical checker
-					while(board[row][col] == piece && row < N) {	
+					while(row < N && board[row][col] == piece) {	
 						count++;
 						if(count == 4)
 							return true;
