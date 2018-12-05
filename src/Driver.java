@@ -28,12 +28,14 @@ public class Driver {
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
 
 		//int time = Integer.parseInt(s.nextLine());
-		int time = 60;
+		int time = 600;
 
 		while(true){
-			System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
+			//System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
 
-			input = s.nextLine();
+			//input = s.nextLine();
+                        
+                        input = "1";
 
 			if(input.equals("1")) {
 				currentPlayer = 1;
@@ -71,7 +73,7 @@ public class Driver {
 			}
 			else {
 				//AI WILL MOVE HERE
-				System.out.println("AI Moving...");
+				System.out.println("\nAI Moving...");
 				aiMove(game, 200, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
 			}
 
@@ -95,6 +97,9 @@ public class Driver {
             abpMove = ABP(game, alpha, beta, depthGoal);
 
             aiMove = convertMove(abpMove);
+            
+            System.out.println("\nAI Move: " + abpMove + " " + aiMove);
+            System.out.println();
 
             if(game.emptyBoard()) {
                 //char x = (char)(rand.nextInt('F' - 'C') + 'C');
@@ -204,8 +209,6 @@ public class Driver {
             
             int digits = (int)(Math.log10(move)+1);
             
-            System.out.println("#: " + move);
-            
             int firstDigit = Integer.parseInt(Integer.toString(move).substring(0, 1));
             int secondDigit = 0;
             
@@ -220,6 +223,31 @@ public class Driver {
             
             if(move >= 0 && move <= 7) {
                 sMove = "A";
+                
+                if(move == 0) {
+                    sMove = "A1";
+                }
+                else if(move == 1) {
+                    sMove = "A2";
+                }
+                else if(move == 2) {
+                    sMove = "A3";
+                }
+                else if(move == 3) {
+                    sMove = "A4";
+                }
+                else if(move == 4) {
+                    sMove = "A5";
+                }
+                else if(move == 5) {
+                    sMove = "A6";
+                }
+                else if(move == 6) {
+                    sMove = "A7";
+                }
+                else if(move == 7) {
+                    sMove = "A8";
+                }
             }
             else if(move >= 8 && move <= 15) {
                 sMove = "B";
