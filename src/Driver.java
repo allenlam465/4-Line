@@ -91,31 +91,31 @@ public class Driver {
             int row, col;
             long startTime = System.currentTimeMillis();
 
-            int abpMove = 0;
+            int abMove = 0;
             String aiMove = "";
 
-            abpMove = ABP(game, alpha, beta, depthGoal);
+            abMove = AlphaBetaSearch(game, alpha, beta, depthGoal);
 
-            aiMove = convertMove(abpMove);
+            aiMove = convertMove(abMove);
             
-            System.out.println("\nAI Move: " + abpMove + " " + aiMove);
+            System.out.println("\nAI Move: " + abMove + " " + aiMove);
             System.out.println();
             
             game.validateMove(aiMove);
             game.placePiece(currentPlayer);
 
-            if(game.emptyBoard()) {
-                //char x = (char)(rand.nextInt('F' - 'C') + 'C');
-                //int y = rand.nextInt((6 - 3) + 1) + 3;
-
-                //String move = Character.toString(x) + Integer.toString(y);
-                System.out.println("AI Move: " + aiMove);
-                game.validateMove(aiMove);
-                game.placePiece(currentPlayer);
-            }
+//            if(game.emptyBoard()) {
+//                //char x = (char)(rand.nextInt('F' - 'C') + 'C');
+//                //int y = rand.nextInt((6 - 3) + 1) + 3;
+//
+//                //String move = Character.toString(x) + Integer.toString(y);
+//                System.out.println("AI Move: " + aiMove);
+//                game.validateMove(aiMove);
+//                game.placePiece(currentPlayer);
+//            }
 	}
 
-	static int ABP(Board game, int alpha, int beta, int depthGoal) {
+	static int AlphaBetaSearch(Board game, int alpha, int beta, int depthGoal) {
             int run = 0;
 
             //System.out.println("\n" + game.printBoard());
