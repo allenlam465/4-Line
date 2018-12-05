@@ -100,6 +100,9 @@ public class Driver {
             
             System.out.println("\nAI Move: " + abpMove + " " + aiMove);
             System.out.println();
+            
+            game.validateMove(aiMove);
+            game.placePiece(currentPlayer);
 
             if(game.emptyBoard()) {
                 //char x = (char)(rand.nextInt('F' - 'C') + 'C');
