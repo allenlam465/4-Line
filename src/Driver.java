@@ -14,13 +14,14 @@ public class Driver {
 	private static long timeLimit;
 	private static int alpha = Integer.MIN_VALUE;
 	private static int beta = Integer.MAX_VALUE;
+	private static int depthLimit = 8;
 
 	private static void menu() {
 		String input;
 		Board game = new Board();
 		Scanner s = new Scanner(System.in);
 
-		//System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
+		System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
 		//System.out.print("Time allowed for generating moves (seconds)?\n>");
 
 		//time = Integer.parseInt(s.nextLine());
@@ -46,7 +47,6 @@ public class Driver {
 		}
 
 		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
-			//ABP(game, currentPlayer, alpha, beta, depth);
 			System.out.println(game.printBoard());
 			if(currentPlayer == 1) {
 				while(true){
@@ -62,13 +62,15 @@ public class Driver {
 					else {
 						System.out.println("Invalid move pick another move.");
 					}
-					//					currentPlayer *= -1;	
 				}
 			}
 			else {
-				//AI WILL MOVE HERE
 				System.out.println("AI Moving...\n");
-				aiMove(game, timeLimit, 6);
+				long startTime = System.currentTimeMillis();
+				aiMove(game, startTime, 5);
+				long endTime = System.currentTimeMillis();
+				
+				System.out.println(((endTime - startTime) / 1000) + " seconds" );
 			}
 
 			//System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
@@ -80,7 +82,7 @@ public class Driver {
 	}
 
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, long time, int depth) {
+	private static void aiMove(Board game, long time, int depthGoal) {
 		Random rand = new Random();
 		long startTime = System.currentTimeMillis();
 
@@ -96,10 +98,10 @@ public class Driver {
 			game.placePiece(currentPlayer);
 		}
 		else {
-			Object[] bestMove = minimax(game, currentPlayer, depth, alpha, beta );
-			System.out.println("Out of loop");			
+			Object[] bestMove = minimax(game, time, currentPlayer, 0, alpha, beta );
 			Move aiMove = new Move((String)bestMove[1]);
 			
+			System.out.println(bestMove[0]);
 			System.out.println(aiMove.getMove());
 
 			game.validateMove(aiMove.getMove());
@@ -107,18 +109,15 @@ public class Driver {
 		}
 	}
 
-	private static Object[] minimax(Board game, int player, int depth, int alpha, int beta) {
+	private static Object[] minimax(Board game, long time, int player, int depth, int alpha, int beta) {
 		ArrayList<String> moveList;
 		Set<String> possibleMoves = new HashSet<>();
 		ArrayList<String> playerMoves =  game.currentPlayerMoves(player*-1);
-		//System.out.println("Player Moves Made " + playerMoves.size());
 
 		for(int i = 0; i < playerMoves.size(); i++) {
 			possibleMoves.addAll(game.adjacencyCheck(playerMoves.get(i)));
-		}
-		
-		possibleMoves.retainAll(game.getEmptySpace());
-		
+		}		
+
 		if(possibleMoves.isEmpty()) {
 			moveList = new ArrayList<>(game.getEmptySpace());			
 		}
@@ -127,42 +126,40 @@ public class Driver {
 		}
 
 		int currentScore, bestScore;
-		Object[] temp;
 		String bestMove = "";
 
-		if(depth == 0) {
-			System.out.println("DONE REACHED DEPTH");
-			Object[] moveSet = {game.evaluateBoard(player), moveList.get(0)};
-			for(Object x : moveSet) {
-				System.out.println(x);
-			}
-			return moveSet;
+		if(depth == depthLimit || time == timeLimit) {
+			Object[] x = {game.evaluateBoard(player), moveList.get(0)};
+			return x;
 		}
 
 		bestScore = alpha;
 
-		//Add timer here
 		while(moveList.size() > 0) {
 			Board testBoard = new Board(game);
 			String newMove = moveList.get(0);
+			
 
-			testBoard.placePiece(player*=-1, newMove);
+			testBoard.placePiece(player, newMove);
+			
 			//System.out.println(testBoard.printBoard());
-			temp = minimax(testBoard, player*=-1, depth-1, -beta, -bestScore );
+			//System.out.println(testBoard.evaluateBoard(1));
+			//System.out.println(testBoard.evaluateBoard(-1));
+
+			Object[] temp = minimax(testBoard, time, player*-1, depth+1, -beta, -bestScore );
 			currentScore = -(Integer)temp[0];
 
 			if(currentScore > bestScore) {
 				bestScore = currentScore;
 				bestMove = newMove;
 			}
-			if(bestScore > currentScore) {
+			if(bestScore > beta) {
 				//System.out.println("PRUNED");
 				Object[] x = {bestScore, bestMove};
 				return x;
 			}
-			System.out.println(moveList.remove(0));
+			moveList.remove(0);
 		}
-	
 		Object[] x = {bestScore, bestMove};
 		return x;
 	}

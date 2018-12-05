@@ -8,22 +8,23 @@ public class Board {
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
 	private Set<String> possibleMoves;
-	
+
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
 		possibleMoves = new HashSet<>();
 		initializeBoard();
 	}
-	
+
 	public Board(Board board) {
 		this.board = new char[N][N];
-		
+
 		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; j++) {
+			for(int j = 0; j < N; j++){
 				this.board[i][j] = board.getBoard()[i][j];
 			}
 		}
+
 	}
 
 	private void initializeBoard() {
@@ -47,7 +48,7 @@ public class Board {
 	public LinkedList<Move> getMoveHistory(){
 		return moveHistory;
 	}
-	
+
 	public Set<String> getPossibleMoves(){
 		return possibleMoves;
 	}
@@ -82,10 +83,9 @@ public class Board {
 		else 
 			board[x][y] = 'O';
 	}
-	
+
 	//Used for the minimax testing placement
 	public void placePiece(int player, int x, int y) {
-		
 		Move move = new Move(x,y);
 		
 		if(player == 1)
@@ -94,34 +94,33 @@ public class Board {
 			board[x][y] = 'O';
 		
 		possibleMoves.remove(move.getMove());
-		
 	}
-	
+
 	public void placePiece(int player, String move) {
 		Move placed = new Move(move);
 		int x = placed.getX(), y = placed.getY();
-		
+
 		if(player == 1)
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
-		
+
 	}
-	
+
 	public void removePreviousPiece() {
 		if(!moveHistory.isEmpty()) {		
 			Move remove = moveHistory.removeLast();
-			
+
 			int x = remove.getX(), y = remove.getY();
-			
+
 			board[x][y] = '-';
 		}
 	}
-	
+
 	public ArrayList<String> currentPlayerMoves(int player){
-		
+
 		ArrayList<String> movesMade = new ArrayList<>();
-		
+
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++) {
 				if(player == 1 && board[i][j] == 'X') {
@@ -136,68 +135,99 @@ public class Board {
 				}
 			}
 		}
-				
+
 		return movesMade;
-		
+
 	}
-	
+
 	public ArrayList<String> adjacencyCheck(String pos) {
-		
+
 		ArrayList<String> adjacentAvalible = new ArrayList<String>();
 		String checking = "";
 		Move move = new Move(pos);
-		
+
 		int x = move.getX();
 		int y = move.getY();
 		char posi;
-		
-		//UP
+
+		//UP, UPLEFT, UPRIGHT
 		if(x - 1 >= 0) {
-			//System.out.println((x - 1) + " " + y);
 			if(board[x - 1][y] == '-') {
 				posi = Character.toUpperCase((char) ((x-1) + 65));
 				checking = Character.toString(posi) + Integer.toString(y + 1);
 				//System.out.println(checking);
 				adjacentAvalible.add(checking);
 			}
+			if(y - 1 >= 0) {
+				if(board[x - 1][y - 1] == '-') {
+					posi = Character.toUpperCase((char) ((x-1) + 65));
+					checking = Character.toString(posi) + Integer.toString(y);
+					//System.out.println(checking);
+					adjacentAvalible.add(checking);
+				}
+				
+			}		
+			if(y + 1 < N) {
+				if(board[x - 1][y + 1] == '-') {
+					posi = Character.toUpperCase((char) ((x-1) + 65));
+					checking = Character.toString(posi) + Integer.toString(y + 2);
+					//System.out.println(checking);
+					adjacentAvalible.add(checking);
+				}
+				
+			}
 		}
-		
+
 		//DOWN
 		if(x + 1 < N) {
-			//System.out.println((x + 1) + " " + y);
 			if(board[x + 1][y] == '-') {
 				posi = Character.toUpperCase((char) ((x+1) + 65));
 				checking = Character.toString(posi) + Integer.toString(y + 1);getClass();
-				//System.out.println(checking);
 				adjacentAvalible.add(checking);
 			}
+			
+			if(y - 1 >= 0) {
+				if(board[x + 1][y - 1] == '-') {
+					posi = Character.toUpperCase((char) ((x+1) + 65));
+					checking = Character.toString(posi) + Integer.toString(y);
+					//System.out.println(checking);
+					adjacentAvalible.add(checking);
+				}
+				
+			}		
+			if(y + 1 < N) {
+				if(board[x + 1][y + 1] == '-') {
+					posi = Character.toUpperCase((char) ((x+1) + 65));
+					checking = Character.toString(posi) + Integer.toString(y + 2);
+					//System.out.println(checking);
+					adjacentAvalible.add(checking);
+				}
+				
+			}
 		}
-		
+
 		//LEFT
 		if(y - 1 >= 0) {
 			//System.out.println(x + " " + (y - 1));
 			if(board[x][y - 1] == '-') {
 				posi = Character.toUpperCase((char) (x + 65));
 				checking = Character.toString(posi) + Integer.toString(y);
-				//System.out.println(checking);
 				adjacentAvalible.add(checking);
 			}
 		}
-		
+
 		//RIGHT
 		if(y + 1 < N) {
 			//System.out.println(x + " " + (y + 1));
 			if(board[x][y + 1] == '-') {
 				posi = Character.toUpperCase((char) (x + 65));
 				checking = Character.toString(posi) + Integer.toString(y + 2);
-				//System.out.println(checking);
 				adjacentAvalible.add(checking);
 			}
 		}
-		//Look at adjacent pieces moves
 		return adjacentAvalible;
 	}
-	
+
 	Set<String> getEmptySpace(){
 		Set<String> emptySpace = new HashSet<>();
 		
@@ -207,11 +237,9 @@ public class Board {
 				emptySpace.add(move.getMove());
 			}
 		}
-		
+
 		return emptySpace;
 	}
-	
-	
 
 	public boolean checkDraw() {
 		for(int i = 0; i < N; i++) {
@@ -242,31 +270,27 @@ public class Board {
 			for(int j = 0; j < N; j++) {
 				//UP, DOWN, RIGHT, LEFT
 				if(board[i][j] == 'X' && currentPlayer == 1) {
-					evaluation += evaluatePieces('X', i, j, 0, -1);
 					evaluation += evaluatePieces('X', i, j, 1, 0);
+					evaluation += evaluatePieces('X', i, j, 0, -1);
 				}
 				else if(board[i][j] == 'O' && currentPlayer == -1) {
-					evaluation -= evaluatePieces('O', i, j, 0, -1);
-					evaluation -= evaluatePieces('O', i, j, 1, 0);
+					evaluation += evaluatePieces('O', i, j, 0, -1);
+					evaluation += evaluatePieces('O', i, j, 1, 0);
 				}
-				//System.out.println("X EVALUATION: " + evaluation);
-//				if(board[i][j] == 'O') {
-//					evaluation -= evaluatePieces('O', i, j, 0, -1);
-//					evaluation -= evaluatePieces('O', i, j, 1, 0);
-//				}
-				//System.out.println("O EVALUATION: " + evaluation);
 			}
 		}
 
 		return evaluation;
 	}
-	
+
 
 	//SHOULD JUST CHECK FOR 4 POS INSTEAD OF WHOLE COL/ROW
 	private int evaluatePieces(char piece, int xPos, int yPos, int horizontal, int vertical) {
 		assert xPos >= 0 && xPos < N && yPos >= 0 && yPos < N;
 
-		int evaluationScore = 1;
+		int evaluationScore = 0;
+		int index = 0;
+		int[] score = {10,100,1000,10000};
 
 		for(
 				int x = xPos + horizontal, y = yPos + vertical, i = 0;
@@ -275,12 +299,13 @@ public class Board {
 				) {
 
 			if(board[x][y] == piece) {
-				evaluationScore *= 10;
-
-				if(evaluationScore == 100) {
+				evaluationScore += score[index];
+				index++;
+				if(evaluationScore > 100) {
 					evaluationScore += checkKillerMove(piece, x, y, horizontal, vertical);
 				}
-				else if(evaluationScore == 1000) {
+				
+				if(evaluationScore > 10000) {
 					return evaluationScore;
 				}
 			}
@@ -311,7 +336,7 @@ public class Board {
 		if(	(row >= 0 && row < N) && 
 				(col >= 0 && col < N) &&
 				board[row][col] == '-') {
-			
+
 			row += vertical * -4;
 			col += horizontal * -4;
 
@@ -339,8 +364,10 @@ public class Board {
 
 					int row = i, col = j;
 
+
+
 					//Horizontal Checker
-					while(board[row][col] == piece && col < N) {	
+					while(col < N && board[row][col] == piece) {	
 						count++;
 						if(count == 4)
 							return true;
@@ -351,7 +378,7 @@ public class Board {
 					col = j;
 
 					//Vertical checker
-					while(board[row][col] == piece && row < N) {	
+					while(row < N && board[row][col] == piece) {	
 						count++;
 						if(count == 4)
 							return true;
