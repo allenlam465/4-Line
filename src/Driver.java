@@ -146,38 +146,56 @@ public class Driver {
                 
                 v = Math.max(v, MinValue(tempBoard, alpha, beta, depthGoal));
                 
+                if(v >= beta) {
+                    return v;
+                }
+                
+                alpha = Math.max(alpha, v);
+                
             }
 
             return v;
 	}
 
-	static int MinValue(Board board, int alpha, int beta, int depthGoal) {
-		int indexOfBestMove = -1;
+	static int MinValue(Board game, int alpha, int beta, int depthGoal) {
+            int indexOfBestMove = -1;
 
-		//if terminal test(state) then return utility(state)
-		if(board.checkDraw()) {
-			return 1;
-		}
-		else if(board.checkWin('O')) {
-			return Integer.MAX_VALUE;
-		}
-		else if(board.checkWin('X')){
-			return Integer.MIN_VALUE;
-		}
-		//cutoff at certain depth
-		if(depthGoal > 3) {
-			depthGoal++;
-			return board.evaluateBoard();
-		}
+            //if terminal test(state) then return utility(state)
+            if(game.checkDraw()) {
+                return 1;
+            }
+            else if(game.checkWin('O')) {
+                return Integer.MAX_VALUE;
+            }
+            else if(game.checkWin('X')){
+                return Integer.MIN_VALUE;
+            }
+            //cutoff at certain depth
+            if(depthGoal > 3) {
+                depthGoal++;
+                return game.evaluateBoard();
+            }
 
-		//v <- pos inf
-		int v = Integer.MAX_VALUE;
+            //v <- pos inf
+            int v = Integer.MAX_VALUE;
 
-		//go through all actions and update v, a, or b accordingly
-		//call MaxValue again
+            //go through all actions and update v, a, or b accordingly
+            //call MaxValue again
+            for(Integer iMove : game.getAvailableMoves()) {
+                Board tempBoard = game;
+                
+                v = Math.min(v, MaxValue(tempBoard, alpha, beta, depthGoal));
+                
+                if(v <= beta) {
+                    return v;
+                }
+                
+                beta = Math.min(alpha, v);
+                
+            }
 
 
-		return v;
+            return v;
 	}
         
         static public String convertMove(int move) {
