@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Driver {
 
 	public static void main(String[] args) {
-		//menu();
+		menu();
                 
                 
                 
@@ -131,8 +131,8 @@ public class Driver {
                 return Integer.MIN_VALUE;
             }
             //cutoff at certain depth
-            if(depthGoal < 5) {
-                depthGoal++;
+            if(depthGoal != 0) {
+                depthGoal--;
                 return game.evaluateBoard();
             }
 
@@ -171,8 +171,8 @@ public class Driver {
                 return Integer.MIN_VALUE;
             }
             //cutoff at certain depth
-            if(depthGoal > 3) {
-                depthGoal++;
+            if(depthGoal != 0) {
+                depthGoal--;
                 return game.evaluateBoard();
             }
 
