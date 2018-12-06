@@ -45,6 +45,9 @@ public class Board {
                 String letter = move.substring(0, 1);
                 String number = move.substring(1, 2);
                 
+                System.out.println("Letter: " + letter + " Number: " + number);
+                System.out.println("");
+                
                 if(letter == "A") {
                     iMove += 0;
                 } else if("B".equals(letter)) {
@@ -88,17 +91,19 @@ public class Board {
 
 		int x = convertXMove(move);
 		int y = Character.getNumericValue(move.charAt(1)) - 1;
+                
+                
 
 		if(x >= 0 && 
-				x < N && 
-				y >= 0 && 
-				y < N && 
-				board[x][y] == '-') {
-			Move placed = new Move(move,x,y);
-			moveHistory.add(placed);
-                        movesAvailable.remove(Integer.valueOf(iMove));
-                        
-			return true;
+                        x < N && 
+                        y >= 0 && 
+                        y < N && 
+                        board[x][y] == '-') {
+                    Move placed = new Move(move,x,y);
+                    moveHistory.add(placed);
+                    movesAvailable.remove(Integer.valueOf(iMove));
+
+                    return true;
 		}
 
 		return false;

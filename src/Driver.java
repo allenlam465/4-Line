@@ -130,7 +130,7 @@ public class Driver {
             
             //if terminal test(state) then return utility(state)
             if(game.checkDraw()) {
-                return 1;
+                return game.evaluateBoard();
             }
             else if(game.checkWin('O')) {
                 return Integer.MAX_VALUE;
@@ -146,16 +146,23 @@ public class Driver {
 
             //v <- neg inf
             int v = Integer.MIN_VALUE;
+            
 
             //go through all actions and update v, a, or b accordingly
             //call MaxValue again
             for(Integer iMove : game.getAvailableMoves()) {
                 Board tempBoard = game;
                 
+                String move = "";
+                
+                move = convertMove(iMove);
+                
+                tempBoard.validateMove(move);
+                
                 v = Math.max(v, MinValue(tempBoard, alpha, beta, depthGoal));
                 
                 if(v >= beta) {
-                    return v;
+                    return iMove;
                 }
                 
                 alpha = Math.max(alpha, v);
@@ -170,7 +177,7 @@ public class Driver {
 
             //if terminal test(state) then return utility(state)
             if(game.checkDraw()) {
-                return 1;
+                return game.evaluateBoard();
             }
             else if(game.checkWin('O')) {
                 return Integer.MAX_VALUE;
@@ -192,13 +199,19 @@ public class Driver {
             for(Integer iMove : game.getAvailableMoves()) {
                 Board tempBoard = game;
                 
-                v = Math.min(v, MaxValue(tempBoard, alpha, beta, depthGoal));
+                String move = "";
                 
-                if(v <= beta) {
-                    return v;
+                move = convertMove(iMove);
+                
+                tempBoard.validateMove(move);
+                
+                v = Math.max(v, MinValue(tempBoard, alpha, beta, depthGoal));
+                
+                if(v <= alpha) {
+                    return iMove;
                 }
                 
-                beta = Math.min(alpha, v);
+                alpha = Math.min(alpha, v);
                 
             }
 
