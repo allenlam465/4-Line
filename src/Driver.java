@@ -17,13 +17,13 @@ public class Driver {
 	private static int alpha = Integer.MIN_VALUE;
 	private static int beta = Integer.MAX_VALUE;
 	private static int depthLimit = 16;
-        private static ArrayList<String> playerMoves = new ArrayList<String>();
-        private static ArrayList<String> aiMoves = new ArrayList<String>();
-        
+	private static ArrayList<String> playerMoves = new ArrayList<String>();
+	private static ArrayList<String> aiMoves = new ArrayList<String>();
+
 
 	private static void menu() {
-                playerMoves.add("N/A");
-                aiMoves.add("N/A");
+		playerMoves.add("N/A");
+		aiMoves.add("N/A");
 		String input;
 		board = new Board();
 		Scanner s = new Scanner(System.in);
@@ -54,20 +54,19 @@ public class Driver {
 
 		while(!board.checkWin('X') && !board.checkWin('O') && !board.checkDraw()) {
 			System.out.println(board.printBoard(playerMoves, aiMoves));
-                        //printMoves(playerMoves, aiMoves);
-                        
+
 			if(currentPlayer == 1) {
 				while(true){
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
-                                        
-                                        if(playerMoves.size() < 8) { 
-                                            playerMoves.add(input);
-                                        }
-                                        else {
-                                            playerMoves.remove(0);
-                                            playerMoves.add(input);
-                                        }
+
+					if(playerMoves.size() < 8) { 
+						playerMoves.add(input);
+					}
+					else {
+						playerMoves.remove(0);
+						playerMoves.add(input);
+					}
 
 					if(board.validateMove(input)) {
 						board.placePiece(currentPlayer);
@@ -77,7 +76,7 @@ public class Driver {
 						System.out.println("Invalid move pick another move.");
 					}
 				}
-				
+
 				currentPlayer = -1;	
 			}
 			else {
@@ -87,18 +86,18 @@ public class Driver {
 				long endTime = System.currentTimeMillis();
 
 				System.out.println(((endTime - startTime)) + " seconds" );
-				
-                                if(aiMoves.size() < 8) { 
-                                    aiMoves.add(aiMove.getMove());
-                                }
-                                else {
-                                    aiMoves.remove(0);
-                                    aiMoves.add(aiMove.getMove());
-                                }
-                                
+
+				if(aiMoves.size() < 8) { 
+					aiMoves.add(aiMove.getMove());
+				}
+				else {
+					aiMoves.remove(0);
+					aiMoves.add(aiMove.getMove());
+				}
+
 				board.validateMove(aiMove.getMove());
 				board.placePiece(currentPlayer);
-				
+
 				currentPlayer = 1;	
 			}
 		}
@@ -114,7 +113,6 @@ public class Driver {
 		s.close();
 	}
 
-	//Add the Alpha-Beta Pruning/Minimax to this maybe
 	private static Move aiMove(long startTime, int depthGoal) {
 		Random rand = new Random();
 		Move aiMove = null;
@@ -125,7 +123,7 @@ public class Driver {
 			char x = (char)(rand.nextInt('F' - 'C') + 'C');
 			int y = rand.nextInt((6 - 3) + 1) + 3;
 			String move = Character.toString(x) + Integer.toString(y);
-			
+
 			aiMove = new Move(move);
 		}
 		else if(board.getMoveHistory().size() == 1) {
@@ -136,18 +134,16 @@ public class Driver {
 			int[] bestMove = miniMaxAB(depthGoal, currentPlayer, alpha, beta );
 			aiMove = new Move((int)bestMove[1], (int)bestMove[2]);
 		}
-		
-		System.out.println(aiMove.getMove());
-		
+
 		System.out.println("AI Move: " + aiMove.getMove());
-		
+
 		return aiMove;
 	}
 
 	private static int[] miniMaxAB(int depth, int player, int alpha, int beta) {
 		int score;
 		int bestRow = -1, bestCol = -1;
-
+		
 		ArrayList<Move> possibleMoves = cState.possibleMoves();
 
 		if(possibleMoves.size() == 1) {
@@ -156,7 +152,7 @@ public class Driver {
 			bestCol = possibleMoves.get(0).getY();
 			return new int[] {score, bestRow, bestCol};
 		}
-		else if(possibleMoves.isEmpty() || depth == 0 || (System.currentTimeMillis() - startTime >= timeLimit )) {
+		else if(possibleMoves.isEmpty() || depth == 0 || ((System.currentTimeMillis()/1000)) - startTime >= timeLimit ) {
 			score = cState.evaluateBoard();
 			return new int[] {score, bestRow, bestCol};
 		}
@@ -191,18 +187,18 @@ public class Driver {
 		}
 
 	}
-        
-        private static void printMoves(ArrayList<String> playerMoves, ArrayList<String> aiMoves) { 
-            System.out.println("\nPlayer vs. Opponent");
-            
-            Iterator<String> playerIt = playerMoves.iterator();
-            Iterator<String> aiIt = aiMoves.iterator();
-            
-            while(playerIt.hasNext() && aiIt.hasNext()){
-                System.out.print("   " + playerIt.next());
-                System.out.print("       ");
-                System.out.println(aiIt.next());
-            }
-            
-        }
+
+	private static void printMoves(ArrayList<String> playerMoves, ArrayList<String> aiMoves) { 
+		System.out.println("\nPlayer vs. Opponent");
+
+		Iterator<String> playerIt = playerMoves.iterator();
+		Iterator<String> aiIt = aiMoves.iterator();
+
+		while(playerIt.hasNext() && aiIt.hasNext()){
+			System.out.print("   " + playerIt.next());
+			System.out.print("       ");
+			System.out.println(aiIt.next());
+		}
+
+	}
 }

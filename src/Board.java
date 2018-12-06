@@ -161,31 +161,17 @@ public class Board {
 
 		ArrayList<Move> possibleMoves = new ArrayList<>();
 
-		//System.out.println("Possible Moves");
 
 		if(winCheck()||loseCheck()) {
-			//			System.out.println("CHECK");
-			//			System.out.println(moves[0].getMove());
-			//			System.out.println(moves[0].getX());
-			//			System.out.println(moves[0].getY());
-			//
-			//			System.out.println(moves[1].getMove());
-			//			System.out.println(moves[1].getX());
-			//			System.out.println(moves[1].getY());
 
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
-				//				System.out.println("First");
 				possibleMoves.add(moves[0]);
 			}
 			if (moves[1].getX() != -1 && moves[1].getY() != -1){
-				//				System.out.println("Second");
 				possibleMoves.add(moves[1]);
 			}
 		}
 		else if(winKillerMove()||loseKillerMove()) {
-			//			System.out.println("KILLERS");
-			//			System.out.println(moves[0].getMove());
-			//			System.out.println(moves[1].getMove());
 
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
 				possibleMoves.add(moves[0]);
@@ -195,7 +181,6 @@ public class Board {
 			}
 		}
 		else {
-			//			System.out.println("EMPTY");
 			for(int i = 0; i < N; i++) {
 				for(int j = 0; j < N; j++) {
 					if(board[i][j] == '-') {		
@@ -390,6 +375,8 @@ public class Board {
 				int row = i;
 				int col = j;
 				count = 0;
+				
+				//Check column to see chances that it will cause lose condition
 
 				while ((col < N) && (board[row][col] == 'X')){
 					count++;			
@@ -408,6 +395,8 @@ public class Board {
 
 				count = 0;
 				col = j;
+				
+				//Check row to see chances that it will cause lose condition
 
 				while ((row < N) && (board[row][col] == 'X')){
 					count++;
@@ -489,6 +478,8 @@ public class Board {
 				int col = j;
 				count = 0;
 
+				//Check column for possible winning moves for the piece.
+				
 				while ((col < N) && (board[row][col] == 'O')){
 					count++;			
 					if (count == 3){
@@ -518,6 +509,8 @@ public class Board {
 
 				count = 0;
 				col = j;
+				
+				//Check row for possible winning moves for the piece.
 
 				while ((row < N) && (board[row][col] == 'O')){
 					count++;			
