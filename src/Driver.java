@@ -16,6 +16,9 @@ public class Driver {
 	private static int alpha = Integer.MIN_VALUE;
 	private static int beta = Integer.MAX_VALUE;
 	private static int depthLimit = 16;
+        private static ArrayList<String> playerMoves = new ArrayList<String>();
+        private static ArrayList<String> aiMoves = new ArrayList<String>();
+        
 
 	private static void menu() {
 		String input;
@@ -48,10 +51,14 @@ public class Driver {
 
 		while(!board.checkWin('X') && !board.checkWin('O') && !board.checkDraw()) {
 			System.out.println(board.printBoard());
+                        printMoves(playerMoves, aiMoves);
+                        
 			if(currentPlayer == 1) {
 				while(true){
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
+                                        
+                                        playerMoves.add(input);
 
 					if(board.validateMove(input)) {
 						board.placePiece(currentPlayer);
@@ -72,6 +79,8 @@ public class Driver {
 
 				System.out.println(((endTime - startTime)) + " seconds" );
 				
+                                aiMoves.add(aiMove.getMove());
+                                
 				board.validateMove(aiMove.getMove());
 				board.placePiece(currentPlayer);
 				
@@ -167,4 +176,9 @@ public class Driver {
 		}
 
 	}
+        
+        private static void printMoves(ArrayList<String> playerMoves, ArrayList<String> aiMoves) { 
+            System.out.println("\nPlayer vs. Opponent");
+            
+        }
 }
