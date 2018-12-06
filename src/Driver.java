@@ -14,7 +14,7 @@ public class Driver {
 	private static long timeLimit;
 	private static int alpha = Integer.MIN_VALUE;
 	private static int beta = Integer.MAX_VALUE;
-	private static int depthLimit = 8;
+	private static int depthLimit = 6;
 
 	private static void menu() {
 		String input;
@@ -56,7 +56,7 @@ public class Driver {
 
 					if(game.validateMove(input)) {
 						game.placePiece(currentPlayer);
-						System.out.println(game.evaluateBoard(currentPlayer));
+						System.out.println(game.evaluateBoard());
 						break;
 					}
 					else {
@@ -67,9 +67,9 @@ public class Driver {
 			else {
 				System.out.println("AI Moving...\n");
 				long startTime = System.currentTimeMillis();
-				aiMove(game, startTime, 5);
+				aiMove(game, 5);
 				long endTime = System.currentTimeMillis();
-				
+
 				System.out.println(((endTime - startTime) / 1000) + " seconds" );
 			}
 
@@ -82,7 +82,7 @@ public class Driver {
 	}
 
 	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, long time, int depthGoal) {
+	private static void aiMove(Board game, int depthGoal) {
 		Random rand = new Random();
 		long startTime = System.currentTimeMillis();
 
@@ -98,9 +98,9 @@ public class Driver {
 			game.placePiece(currentPlayer);
 		}
 		else {
-			Object[] bestMove = minimax(game, time, currentPlayer, 0, alpha, beta );
-			Move aiMove = new Move((String)bestMove[1]);
-			
+			int[] bestMove = miniMaxAB(game, startTime, currentPlayer, 0, alpha, beta );
+			Move aiMove = new Move(bestMove[1],bestMove[2]);
+
 			System.out.println(bestMove[0]);
 			System.out.println(aiMove.getMove());
 
@@ -109,59 +109,49 @@ public class Driver {
 		}
 	}
 
-	private static Object[] minimax(Board game, long time, int player, int depth, int alpha, int beta) {
-		ArrayList<String> moveList;
-		Set<String> possibleMoves = new HashSet<>();
-		ArrayList<String> playerMoves =  game.currentPlayerMoves(player*-1);
+	private static int[] miniMaxAB(Board game, long time, int depth, int player, int alpha, int beta) {
+		Board testBoard = new Board(game);
+		int score;
+		int bestRow = -1, bestCol = -1;
 
-		for(int i = 0; i < playerMoves.size(); i++) {
-			possibleMoves.addAll(game.adjacencyCheck(playerMoves.get(i)));
-		}		
+		ArrayList<Move> piecesAdjacency = game.adjacencyCheck();
 
-		if(possibleMoves.isEmpty()) {
-			moveList = new ArrayList<>(game.getEmptySpace());			
+		if(piecesAdjacency.size() == 1) {
+			score = game.evaluateBoard();
+			bestRow = piecesAdjacency.get(0).getX();
+			bestCol = piecesAdjacency.get(0).getY();
+			return new int[] {score, bestRow, bestCol};
+		}
+		else if(piecesAdjacency.isEmpty() || depth == 0 || (System.currentTimeMillis() - time >= timeLimit )) {
+			score = game.evaluateBoard();
+			return new int[] {score, bestRow, bestCol};
 		}
 		else {
-			moveList = new ArrayList<>(possibleMoves);			
-		}
+			for(Move move : piecesAdjacency) {
+				if(player == -1) {
+					testBoard.placePiece(player, move.getMove());
+					score = miniMaxAB(testBoard, time, depth - 1, player * -1, alpha, beta)[0];
+					if(score > alpha) {
+						alpha = score;
+						bestRow = move.getX();
+						bestCol = move.getY();
+					}
+				}
+				else {
+					testBoard.placePiece(player, move.getMove());
+					score = miniMaxAB(testBoard, time, depth - 1, player * -1, alpha, beta)[0];
+					if(score < beta) {
+						beta = score;
+						bestRow = move.getX();
+						bestCol = move.getY();
+					}
+				}
 
-		int currentScore, bestScore;
-		String bestMove = "";
-
-		if(depth == depthLimit || time == timeLimit) {
-			Object[] x = {game.evaluateBoard(player), moveList.get(0)};
-			return x;
-		}
-
-		bestScore = alpha;
-
-		while(moveList.size() > 0) {
-			Board testBoard = new Board(game);
-			String newMove = moveList.get(0);
-			
-
-			testBoard.placePiece(player, newMove);
-			
-			//System.out.println(testBoard.printBoard());
-			//System.out.println(testBoard.evaluateBoard(1));
-			//System.out.println(testBoard.evaluateBoard(-1));
-
-			Object[] temp = minimax(testBoard, time, player*-1, depth+1, -beta, -bestScore );
-			currentScore = -(Integer)temp[0];
-
-			if(currentScore > bestScore) {
-				bestScore = currentScore;
-				bestMove = newMove;
+				if(alpha >= beta)
+					break;
 			}
-			if(bestScore > beta) {
-				//System.out.println("PRUNED");
-				Object[] x = {bestScore, bestMove};
-				return x;
-			}
-			moveList.remove(0);
+			return new int[]{(player == -1) ? alpha : beta, bestRow, bestCol};
 		}
-		Object[] x = {bestScore, bestMove};
-		return x;
 	}
 
 }
