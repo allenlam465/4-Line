@@ -158,35 +158,35 @@ public class Board {
 	}
 
 	public ArrayList<Move> possibleMoves() {
-		
+
 		ArrayList<Move> possibleMoves = new ArrayList<>();
 
 		//System.out.println("Possible Moves");
-		
+
 		if(winCheck()||loseCheck()) {
-//			System.out.println("CHECK");
-//			System.out.println(moves[0].getMove());
-//			System.out.println(moves[0].getX());
-//			System.out.println(moves[0].getY());
-//
-//			System.out.println(moves[1].getMove());
-//			System.out.println(moves[1].getX());
-//			System.out.println(moves[1].getY());
+			//			System.out.println("CHECK");
+			//			System.out.println(moves[0].getMove());
+			//			System.out.println(moves[0].getX());
+			//			System.out.println(moves[0].getY());
+			//
+			//			System.out.println(moves[1].getMove());
+			//			System.out.println(moves[1].getX());
+			//			System.out.println(moves[1].getY());
 
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
-//				System.out.println("First");
+				//				System.out.println("First");
 				possibleMoves.add(moves[0]);
 			}
 			if (moves[1].getX() != -1 && moves[1].getY() != -1){
-//				System.out.println("Second");
+				//				System.out.println("Second");
 				possibleMoves.add(moves[1]);
 			}
 		}
 		else if(winKillerMove()||loseKillerMove()) {
-//			System.out.println("KILLERS");
-//			System.out.println(moves[0].getMove());
-//			System.out.println(moves[1].getMove());
-			
+			//			System.out.println("KILLERS");
+			//			System.out.println(moves[0].getMove());
+			//			System.out.println(moves[1].getMove());
+
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
 				possibleMoves.add(moves[0]);
 			}
@@ -195,7 +195,7 @@ public class Board {
 			}
 		}
 		else {
-//			System.out.println("EMPTY");
+			//			System.out.println("EMPTY");
 			for(int i = 0; i < N; i++) {
 				for(int j = 0; j < N; j++) {
 					if(board[i][j] == '-') {		
@@ -205,7 +205,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		return possibleMoves;
 	}
 
@@ -384,7 +384,7 @@ public class Board {
 		int count;
 		moves[0] = new Move(-1,-1);
 		moves[1] = new Move(-1,-1);
-		
+
 		for (int i = 0; i < N; i++){
 			for (int j = 0; j < N; j++){               
 				int row = i;
@@ -440,7 +440,7 @@ public class Board {
 				int row = i;
 				int col = j;
 				count = 0;
-				
+
 				// Column checker check for any possible killer move placements
 
 				while ((col < N) && (board[row][col] == 'X')){
@@ -457,7 +457,7 @@ public class Board {
 				}
 				count = 0;
 				col = j;
-				
+
 				// Row checker check for any possible killer move placements
 
 				while ((row < N) && (board[row][col] == 'X')){
@@ -563,7 +563,7 @@ public class Board {
 				count = 0;
 
 				// Column checker check for any possible killer move placements
-				
+
 				while ((col < N) && (board[row][col] == 'O')){
 					count++;
 					if (count == 2){                            
@@ -587,7 +587,7 @@ public class Board {
 
 				count = 0;
 				col = j;
-				
+
 				// Row checker check for any possible killer move placements
 
 				while ((row < N) && (board[row][col] == 'O')){
@@ -674,46 +674,21 @@ public class Board {
 	}
 
 	public String printBoard(ArrayList<String> playerMoves, ArrayList<String> aiMoves) {
-                Iterator<String> playerIt = playerMoves.iterator();
-                Iterator<String> aiIt = aiMoves.iterator();
-            
-//                while(playerIt.hasNext() && aiIt.hasNext()){
-//                    System.out.print("   " + playerIt.next());
-//                    System.out.print("       ");
-//                    System.out.println(aiIt.next());
-//                }
-                
+		Iterator<String> playerIt = playerMoves.iterator();
+		Iterator<String> aiIt = aiMoves.iterator();
+
 		StringBuilder sb = new StringBuilder();
-		int index = 0, col = 1;
 		sb.append("  1 2 3 4 5 6 7 8 	Player vs. Oppenent");
 		for(int i = 0; i < N; i ++) {
 			sb.append("\n" + Character.toString(((char)(65 + i))) + " ");
 			for(int j = 0; j < N; j++) {
 				sb.append(board[i][j] + " ");
-                                if(j == 7){
-                                    if(playerIt.hasNext() && aiIt.hasNext()) {
-                                        sb.append("         " + playerIt.next() + "       " + aiIt.next());
-                                    }
-                                }
+				if(j == 7){
+					if(playerIt.hasNext() && aiIt.hasNext()) {
+						sb.append("         " + playerIt.next().toUpperCase() + "       " + aiIt.next());
+					}
+				}
 			}
-
-//			for(int k = 0; k < 2; k++) {
-//				if(!moveHistory.isEmpty() && index + 1 < moveHistory.size()) {
-//					sb.append("	   " + col + ". " + moveHistory.get(index).getMove());
-//						
-//					index++;
-//					col++;
-//					System.out.println(moveHistory.size() - 1);
-//					System.out.println(index);
-//					
-//					if(moveHistory.size() > index) {
-//						sb.append(" " + moveHistory.get(index).getMove() + "\n");
-//						index++;
-//					}
-//
-//				}
-//			}
-//			sb.append("\n");
 
 		}
 		return sb.toString();
