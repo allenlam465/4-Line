@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -58,7 +59,13 @@ public class Driver {
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
                                         
-                                        playerMoves.add(input);
+                                        if(playerMoves.size() < 5) { 
+                                            playerMoves.add(input);
+                                        }
+                                        else {
+                                            playerMoves.remove(4);
+                                            playerMoves.add(input);
+                                        }
 
 					if(board.validateMove(input)) {
 						board.placePiece(currentPlayer);
@@ -79,7 +86,13 @@ public class Driver {
 
 				System.out.println(((endTime - startTime)) + " seconds" );
 				
-                                aiMoves.add(aiMove.getMove());
+                                if(aiMoves.size() < 5) { 
+                                    aiMoves.add(aiMove.getMove());
+                                }
+                                else {
+                                    aiMoves.remove(4);
+                                    aiMoves.add(aiMove.getMove());
+                                }
                                 
 				board.validateMove(aiMove.getMove());
 				board.placePiece(currentPlayer);
@@ -179,6 +192,15 @@ public class Driver {
         
         private static void printMoves(ArrayList<String> playerMoves, ArrayList<String> aiMoves) { 
             System.out.println("\nPlayer vs. Opponent");
+            
+            Iterator<String> playerIt = playerMoves.iterator();
+            Iterator<String> aiIt = aiMoves.iterator();
+            
+            while(playerIt.hasNext() && aiIt.hasNext()){
+                System.out.print("   " + playerIt.next());
+                System.out.print("       ");
+                System.out.println(aiIt.next());
+            }
             
         }
 }
