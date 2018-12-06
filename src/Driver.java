@@ -22,6 +22,8 @@ public class Driver {
         
 
 	private static void menu() {
+                playerMoves.add("N/A");
+                aiMoves.add("N/A");
 		String input;
 		board = new Board();
 		Scanner s = new Scanner(System.in);
@@ -51,15 +53,15 @@ public class Driver {
 		}
 
 		while(!board.checkWin('X') && !board.checkWin('O') && !board.checkDraw()) {
-			System.out.println(board.printBoard());
-                        printMoves(playerMoves, aiMoves);
+			System.out.println(board.printBoard(playerMoves, aiMoves));
+                        //printMoves(playerMoves, aiMoves);
                         
 			if(currentPlayer == 1) {
 				while(true){
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
                                         
-                                        if(playerMoves.size() < 5) { 
+                                        if(playerMoves.size() < 8) { 
                                             playerMoves.add(input);
                                         }
                                         else {
@@ -86,7 +88,7 @@ public class Driver {
 
 				System.out.println(((endTime - startTime)) + " seconds" );
 				
-                                if(aiMoves.size() < 5) { 
+                                if(aiMoves.size() < 8) { 
                                     aiMoves.add(aiMove.getMove());
                                 }
                                 else {

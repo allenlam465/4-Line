@@ -673,7 +673,16 @@ public class Board {
 		return true;
 	}
 
-	public String printBoard() {
+	public String printBoard(ArrayList<String> playerMoves, ArrayList<String> aiMoves) {
+                Iterator<String> playerIt = playerMoves.iterator();
+                Iterator<String> aiIt = aiMoves.iterator();
+            
+//                while(playerIt.hasNext() && aiIt.hasNext()){
+//                    System.out.print("   " + playerIt.next());
+//                    System.out.print("       ");
+//                    System.out.println(aiIt.next());
+//                }
+                
 		StringBuilder sb = new StringBuilder();
 		int index = 0, col = 1;
 		sb.append("  1 2 3 4 5 6 7 8 	Player vs. Oppenent");
@@ -681,6 +690,11 @@ public class Board {
 			sb.append("\n" + Character.toString(((char)(65 + i))) + " ");
 			for(int j = 0; j < N; j++) {
 				sb.append(board[i][j] + " ");
+                                if(j == 7){
+                                    if(playerIt.hasNext() && aiIt.hasNext()) {
+                                        sb.append("         " + playerIt.next() + "       " + aiIt.next());
+                                    }
+                                }
 			}
 
 //			for(int k = 0; k < 2; k++) {
