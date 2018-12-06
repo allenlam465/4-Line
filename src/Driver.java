@@ -63,7 +63,7 @@ public class Driver {
                                             playerMoves.add(input);
                                         }
                                         else {
-                                            playerMoves.remove(4);
+                                            playerMoves.remove(0);
                                             playerMoves.add(input);
                                         }
 
@@ -90,7 +90,7 @@ public class Driver {
                                     aiMoves.add(aiMove.getMove());
                                 }
                                 else {
-                                    aiMoves.remove(4);
+                                    aiMoves.remove(0);
                                     aiMoves.add(aiMove.getMove());
                                 }
                                 
