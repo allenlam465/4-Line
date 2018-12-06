@@ -375,7 +375,7 @@ public class Board {
 				int row = i;
 				int col = j;
 				count = 0;
-				
+
 				//Check column to see chances that it will cause lose condition
 
 				while ((col < N) && (board[row][col] == 'X')){
@@ -395,7 +395,7 @@ public class Board {
 
 				count = 0;
 				col = j;
-				
+
 				//Check row to see chances that it will cause lose condition
 
 				while ((row < N) && (board[row][col] == 'X')){
@@ -479,7 +479,7 @@ public class Board {
 				count = 0;
 
 				//Check column for possible winning moves for the piece.
-				
+
 				while ((col < N) && (board[row][col] == 'O')){
 					count++;			
 					if (count == 3){
@@ -509,7 +509,7 @@ public class Board {
 
 				count = 0;
 				col = j;
-				
+
 				//Check row for possible winning moves for the piece.
 
 				while ((row < N) && (board[row][col] == 'O')){
@@ -680,9 +680,9 @@ public class Board {
 					if(playerIt.hasNext() && aiIt.hasNext()) {
 						sb.append("         " + playerIt.next().toUpperCase() + "       " + aiIt.next());
 					}
-                                        else if(playerIt.hasNext()) {
-                                            sb.append("         " + playerIt.next().toUpperCase());
-                                        }
+					else if(playerIt.hasNext()) {
+						sb.append("         " + playerIt.next().toUpperCase());
+					}
 				}
 			}
 
