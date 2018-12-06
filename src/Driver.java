@@ -22,8 +22,6 @@ public class Driver {
 
 
 	private static void menu() {
-		playerMoves.add("N/A");
-		aiMoves.add("N/A");
 		String input;
 		board = new Board();
 		Scanner s = new Scanner(System.in);
@@ -80,12 +78,13 @@ public class Driver {
 				currentPlayer = -1;	
 			}
 			else {
-				System.out.println("AI Moving...\n");
+				System.out.println("\nAI Moving...\n");
 				startTime = System.currentTimeMillis();
 				Move aiMove = aiMove(startTime, depthLimit);
 				long endTime = System.currentTimeMillis();
 
 				System.out.println(((endTime - startTime)) + " seconds" );
+                                System.out.println();
 
 				if(aiMoves.size() < 8) { 
 					aiMoves.add(aiMove.getMove());

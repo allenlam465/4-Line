@@ -680,6 +680,9 @@ public class Board {
 					if(playerIt.hasNext() && aiIt.hasNext()) {
 						sb.append("         " + playerIt.next().toUpperCase() + "       " + aiIt.next());
 					}
+                                        else if(playerIt.hasNext()) {
+                                            sb.append("         " + playerIt.next().toUpperCase());
+                                        }
 				}
 			}
 
