@@ -1,31 +1,33 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Driver {
+
+	private static Board board;
+	private static Board cState;
+	private static int currentPlayer;
+	private static long timeLimit = 25;
+	private static long startTime = 0, endTime;
+	private static int alpha = Integer.MIN_VALUE;
+	private static int beta = Integer.MAX_VALUE;
+	private static int depthLimit = 50;
+	private static ArrayList<String> playerMoves = new ArrayList<String>();
+	private static ArrayList<String> aiMoves = new ArrayList<String>();
 
 	public static void main(String[] args) {
 		menu();
 	}
 
-	private static int currentPlayer;
-	private static long timeLimit;
-	private static int alpha = Integer.MIN_VALUE;
-	private static int beta = Integer.MAX_VALUE;
-	private static int depthLimit = 6;
-
 	private static void menu() {
 		String input;
-		Board game = new Board();
+		board = new Board();
 		Scanner s = new Scanner(System.in);
 
-		System.out.println("4 In a Line Game with Minimax and Alpha-Beta Pruning");
-		//System.out.print("Time allowed for generating moves (seconds)?\n>");
+		System.out.println("4 In a Line board with Minimax and Alpha-Beta Pruning");
+		System.out.print("Time allowed for generating moves (seconds)?\n>");
 
-		//time = Integer.parseInt(s.nextLine());
-		timeLimit = 25;
+		timeLimit = Integer.parseInt(s.nextLine());
 
 		while(true){
 			System.out.print("\nStarting player: \n1. Player\n2. Opponent \n>");
@@ -46,17 +48,24 @@ public class Driver {
 				System.out.println("Invalid input.");
 		}
 
-		while(!game.checkWin('X') && !game.checkWin('O') && !game.checkDraw()) {
-			System.out.println(game.printBoard());
+		while(!board.checkWin('X') && !board.checkWin('O') && !board.checkDraw()) {
+			System.out.println(board.printBoard(playerMoves, aiMoves));
+
 			if(currentPlayer == 1) {
 				while(true){
-					//System.out.println(game.printBoard());
 					System.out.print("\nInput Move \n>");
 					input = s.nextLine();
 
-					if(game.validateMove(input)) {
-						game.placePiece(currentPlayer);
-						System.out.println(game.evaluateBoard());
+					if(playerMoves.size() < 8) { 
+						playerMoves.add(input);
+					}
+					else {
+						playerMoves.remove(0);
+						playerMoves.add(input);
+					}
+
+					if(board.validateMove(input)) {
+						board.placePiece(currentPlayer);
 						break;
 					}
 					else {
@@ -65,72 +74,90 @@ public class Driver {
 				}
 			}
 			else {
-				System.out.println("AI Moving...\n");
-				long startTime = System.currentTimeMillis();
-				aiMove(game, 5);
-				long endTime = System.currentTimeMillis();
+				System.out.println("\nAI Moving...\n");
+				startTime = System.currentTimeMillis();
+				Move aiMove = aiMove(startTime, depthLimit);
+				endTime = System.currentTimeMillis();
 
-				System.out.println(((endTime - startTime) / 1000) + " seconds" );
+				System.out.println((endTime - startTime)/1000 + " seconds");
+				System.out.println();
+
+				if(aiMoves.size() < 8) { 
+					aiMoves.add(aiMove.getMove());
+				}
+				else {
+					aiMoves.remove(0);
+					aiMoves.add(aiMove.getMove());
+				}
+
+				board.validateMove(aiMove.getMove());
+				board.placePiece(currentPlayer);
 			}
+			
+			currentPlayer *= -1;
+		}
 
-			//System.out.print(game.checkWin('X') + " " + game.checkWin('O'));
-			currentPlayer *= -1;	
+		System.out.println(board.printBoard(playerMoves, aiMoves));
 
+		if (board.checkWin('X')) {
+			System.out.println("You won!");
+		} else if (board.checkWin('O')) {
+			System.out.println("You lost!");
+		} else {
+			System.out.println("It's a draw!");
 		}
 
 		s.close();
 	}
 
-	//Add the Alpha-Beta Pruning/Minimax to this maybe
-	private static void aiMove(Board game, int depthGoal) {
+	private static Move aiMove(long startTime, int depthGoal) {
 		Random rand = new Random();
-		long startTime = System.currentTimeMillis();
+		Move aiMove = null;
+		cState = new Board(board);
 
 		//Randomness introduced at empty board
-		if(game.emptyBoard()) {
+		if(board.emptyBoard()) {
 			char x = (char)(rand.nextInt('F' - 'C') + 'C');
 			int y = rand.nextInt((6 - 3) + 1) + 3;
-
 			String move = Character.toString(x) + Integer.toString(y);
-			System.out.println("AI Move: " + move);
 
-			game.validateMove(move);
-			game.placePiece(currentPlayer);
+			aiMove = new Move(move);
+		}
+		else if(board.getMoveHistory().size() == 1) {
+			ArrayList<Move> adjacent = board.adjacencyCheck(board.getMoveHistory().get(0).getMove());
+			aiMove = adjacent.get(rand.nextInt(adjacent.size()));
 		}
 		else {
-			int[] bestMove = miniMaxAB(game, startTime, currentPlayer, 0, alpha, beta );
-			Move aiMove = new Move(bestMove[1],bestMove[2]);
-
-			System.out.println(bestMove[0]);
-			System.out.println(aiMove.getMove());
-
-			game.validateMove(aiMove.getMove());
-			game.placePiece(currentPlayer);
+			int[] bestMove = miniMaxAB(depthGoal, currentPlayer, alpha, beta );
+			aiMove = new Move((int)bestMove[1], (int)bestMove[2]);
 		}
+
+		System.out.println("AI Move: " + aiMove.getMove());
+
+		return aiMove;
 	}
 
-	private static int[] miniMaxAB(Board game, long time, int depth, int player, int alpha, int beta) {
-		Board testBoard = new Board(game);
+	private static int[] miniMaxAB(int depth, int player, int alpha, int beta) {
 		int score;
 		int bestRow = -1, bestCol = -1;
 
-		ArrayList<Move> piecesAdjacency = game.adjacencyCheck();
-
-		if(piecesAdjacency.size() == 1) {
-			score = game.evaluateBoard();
-			bestRow = piecesAdjacency.get(0).getX();
-			bestCol = piecesAdjacency.get(0).getY();
+		ArrayList<Move> possibleMoves = cState.possibleMoves();
+		
+		if(possibleMoves.size() == 1) {
+			score = cState.evaluateBoard();
+			bestRow = possibleMoves.get(0).getX();
+			bestCol = possibleMoves.get(0).getY();
 			return new int[] {score, bestRow, bestCol};
 		}
-		else if(piecesAdjacency.isEmpty() || depth == 0 || (System.currentTimeMillis() - time >= timeLimit )) {
-			score = game.evaluateBoard();
+		else if(possibleMoves.isEmpty() || depth == 0 || ((System.currentTimeMillis()/1000)) - startTime >= timeLimit ) {
+			score = cState.evaluateBoard();
 			return new int[] {score, bestRow, bestCol};
 		}
 		else {
-			for(Move move : piecesAdjacency) {
+			for(Move move : possibleMoves) {
 				if(player == -1) {
-					testBoard.placePiece(player, move.getMove());
-					score = miniMaxAB(testBoard, time, depth - 1, player * -1, alpha, beta)[0];
+					cState.placePiece(player, move.getMove());
+					score = miniMaxAB(depth - 1, 1, alpha, beta)[0];
 					if(score > alpha) {
 						alpha = score;
 						bestRow = move.getX();
@@ -138,20 +165,23 @@ public class Driver {
 					}
 				}
 				else {
-					testBoard.placePiece(player, move.getMove());
-					score = miniMaxAB(testBoard, time, depth - 1, player * -1, alpha, beta)[0];
+					cState.placePiece(player, move.getMove());
+					score = miniMaxAB(depth - 1, -1, alpha, beta)[0];
 					if(score < beta) {
 						beta = score;
 						bestRow = move.getX();
 						bestCol = move.getY();
 					}
 				}
+				
+				cState.removePiece(move);
 
 				if(alpha >= beta)
 					break;
+
 			}
 			return new int[]{(player == -1) ? alpha : beta, bestRow, bestCol};
 		}
-	}
 
+	}
 }

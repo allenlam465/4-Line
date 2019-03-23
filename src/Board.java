@@ -1,40 +1,28 @@
 import java.util.*;
 
-//CHEATSHEET BOTH SIDES ON FINAL
-
 public class Board {
 
 	private int N = 8;
 	private char[][] board;
 	private LinkedList<Move> moveHistory;
-	private Set<String> possibleMoves;
-	private Move[] moves = {new Move(-1,-1), new Move(-1,-1)};
-	private boolean winning, losing;
-	
+	private Move[] moves = new Move[2];
+
+	private boolean losing, winning;
+
 	public Board() {
 		this.board = new char[N][N];
 		moveHistory = new LinkedList<>();
-		possibleMoves = new HashSet<>();
 		initializeBoard();
 	}
 
-	public Board(Board board) {
-		this.board = new char[N][N];
-
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; j++){
-				this.board[i][j] = board.getBoard()[i][j];
-			}
-		}
-
+	public Board(Board board) {	
+		this.board = board.getBoard();
 	}
 
 	private void initializeBoard() {
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < N; j++){
 				board[i][j] = '-';
-				char pos = Character.toUpperCase((char) (i + 65));
-				possibleMoves.add(Character.toString(pos) + Integer.toString(j + 1));
 			}
 		}
 	}
@@ -51,10 +39,6 @@ public class Board {
 		return moveHistory;
 	}
 
-	public Set<String> getPossibleMoves(){
-		return possibleMoves;
-	}
-
 	public boolean validateMove(String move) {
 		if(move.length() == 0 || (move.length() > 2 || move.length() == 1)) 
 			return false;
@@ -69,7 +53,6 @@ public class Board {
 				board[x][y] == '-') {
 			Move placed = new Move(move.toUpperCase(),x,y);
 			moveHistory.add(placed);
-			possibleMoves.remove(move);
 			return true;
 		}
 
@@ -86,18 +69,6 @@ public class Board {
 			board[x][y] = 'O';
 	}
 
-	//Used for the minimax testing placement
-	public void placePiece(int player, int x, int y) {
-		Move move = new Move(x,y);
-
-		if(player == 1)
-			board[x][y] = 'X';
-		else 
-			board[x][y] = 'O';
-
-		possibleMoves.remove(move.getMove());
-	}
-
 	public void placePiece(int player, String move) {
 		Move placed = new Move(move);
 		int x = placed.getX(), y = placed.getY();
@@ -106,17 +77,10 @@ public class Board {
 			board[x][y] = 'X';
 		else 
 			board[x][y] = 'O';
-
 	}
 
-	public void removePreviousPiece() {
-		if(!moveHistory.isEmpty()) {		
-			Move remove = moveHistory.removeLast();
-
-			int x = remove.getX(), y = remove.getY();
-
-			board[x][y] = '-';
-		}
+	public void removePiece(Move move) {
+		board[move.getX()][move.getY()] = '-';
 	}
 
 	public ArrayList<String> currentPlayerMoves(int player){
@@ -139,76 +103,92 @@ public class Board {
 		}
 
 		return movesMade;
-
 	}
 
-	public ArrayList<Move> adjacencyCheck() {
+	public ArrayList<Move> adjacencyCheck(String pos) {
+
 		ArrayList<Move> adjacentAvalible = new ArrayList<>();
+		String checking = "";
+		Move move = new Move(pos);
+
+		int x = move.getX();
+		int y = move.getY();
+		char posi;
+
+		//UP
+		if(x - 1 >= 0) {
+			if(board[x - 1][y] == '-') {
+				posi = Character.toUpperCase((char) ((x-1) + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 1);
+				adjacentAvalible.add(new Move(checking));
+			}
+		}
+
+		//DOWN
+		if(x + 1 < N) {
+			if(board[x + 1][y] == '-') {
+				posi = Character.toUpperCase((char) ((x+1) + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 1);getClass();
+				adjacentAvalible.add(new Move(checking));
+			}
+		}
+
+		//LEFT
+		if(y - 1 >= 0) {
+			if(board[x][y - 1] == '-') {
+				posi = Character.toUpperCase((char) (x + 65));
+				checking = Character.toString(posi) + Integer.toString(y);
+				adjacentAvalible.add(new Move(checking));
+			}
+		}
+
+		//RIGHT
+		if(y + 1 < N) {
+			if(board[x][y + 1] == '-') {
+				posi = Character.toUpperCase((char) (x + 65));
+				checking = Character.toString(posi) + Integer.toString(y + 2);
+				adjacentAvalible.add(new Move(checking));
+			}
+		}
+
+		return adjacentAvalible;
+	}
+
+	public ArrayList<Move> possibleMoves() {
+
+		ArrayList<Move> possibleMoves = new ArrayList<>();
+
 
 		if(winCheck()||loseCheck()) {
+
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
-				adjacentAvalible.add(moves[0]);
+				possibleMoves.add(moves[0]);
 			}
 			if (moves[1].getX() != -1 && moves[1].getY() != -1){
-				adjacentAvalible.add(moves[1]);
+				possibleMoves.add(moves[1]);
 			}
 		}
 		else if(winKillerMove()||loseKillerMove()) {
+
 			if (moves[0].getX() != -1 && moves[0].getY() != -1){
-				adjacentAvalible.add(moves[0]);
+				possibleMoves.add(moves[0]);
 			}
 			if (moves[1].getX() != -1 && moves[1].getY() != -1){
-				adjacentAvalible.add(moves[1]);
+				possibleMoves.add(moves[1]);
 			}
 		}
 		else {
 			for(int i = 0; i < N; i++) {
 				for(int j = 0; j < N; j++) {
-					if(board[i][j] == '-') {					
+					if(board[i][j] == '-') {		
 						Move move = new Move(i, j);
-						adjacentAvalible.add(move);
+						possibleMoves.add(move);
 					}
 				}
 			}
 		}
 
-		return adjacentAvalible;
-
-	}
-
-	Set<String> getEmptySpace(){
-		Set<String> emptySpace = new HashSet<>();
-
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; j++) {
-				Move move = new Move(i, j);
-				emptySpace.add(move.getMove());
-			}
-		}
-
-		return emptySpace;
-	}
-
-	public boolean checkDraw() {
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; i++) {
-				if(board[i][j] == '-')
-					return false;
-			}
-		}
-
-		return true;
-	}
-
-	public boolean emptyBoard() {
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < N; j++) {
-				if(board[i][j] != '-')
-					return false;
-			}
-		}
-
-		return true;
+		return possibleMoves;
 	}
 
 	public int evaluateBoard() {
@@ -223,6 +203,7 @@ public class Board {
 				if(board[i][j] == '-') {
 					int row = i;
 					int col = j;
+					count = 0;
 
 					col++;
 
@@ -241,6 +222,7 @@ public class Board {
 						col = j - 1;
 
 					while ((col >= 0) && (board[row][col] == 'X')){
+
 						count++;
 						if (count == 1)
 							currentPoints -= 5;
@@ -249,91 +231,91 @@ public class Board {
 						if (count == 3)
 							currentPoints -= 50;                           
 						col--;
+					}
 
-						count = 0;
-						col = j;
+					count = 0;
+					col = j;
+					row++;
+
+					while ((row < N) && (board[row][col] == 'X')){
+						count++;
+						if (count == 1)
+							currentPoints -= 5;
+						if (count == 2)
+							currentPoints -= 25;                          
+						if (count == 3)
+							currentPoints -= 50;                            
 						row++;
+					}
 
-						while ((row < N) && (board[row][col] == 'X')){
-							count++;
-							if (count == 1)
-								currentPoints -= 5;
-							if (count == 2)
-								currentPoints -= 25;                          
-							if (count == 3)
-								currentPoints -= 50;                            
-							row++;
-						}
+					if (i - 1 >= 0)
+						row = i - 1;
+					while ((row >= 0) && (board[row][col] == 'X')){
+						count++;
+						if (count == 1)
+							currentPoints -= 5;
+						if (count == 2)
+							currentPoints -= 25;                           
+						if (count == 3)
+							currentPoints -= 50;                           
+						row--;
+					}
 
-						if (i - 1 >= 0)
-							row = i - 1;
-						while ((row >= 0) && (board[row][col] == 'X')){
-							count++;
-							if (count == 1)
-								currentPoints -= 5;
-							if (count == 2)
-								currentPoints -= 25;                           
-							if (count == 3)
-								currentPoints -= 50;                           
-							row--;
-						}
+					row = i;
+					col = j;
+					count = 0;
 
-						row = i;
-						col = j;
-						count = 0;
-
+					col++;
+					while ((col < N) && (board[row][col] == 'O')){
+						count++;
+						if (count == 1)
+							currentPoints += 5;
+						if (count == 2)
+							currentPoints += 25;
+						if (count == 3)
+							currentPoints += 50;
 						col++;
-						while ((col < N) && (board[row][col] == 'O')){
-							count++;
-							if (count == 1)
-								currentPoints += 5;
-							if (count == 2)
-								currentPoints += 25;
-							if (count == 3)
-								currentPoints += 50;
-							col++;
-						}
+					}
 
-						if (j - 1 >= 0)
-							col = j - 1;
-						while ((col >= 0) && (board[row][col] == 'O')){
-							count++;
-							if (count == 1)
-								currentPoints += 5;
-							if (count == 2)
-								currentPoints += 25;
-							if (count == 3)
-								currentPoints += 50;
-							col--;
-						}
+					if (j - 1 >= 0)
+						col = j - 1;
+					while ((col >= 0) && (board[row][col] == 'O')){
+						count++;
+						if (count == 1)
+							currentPoints += 5;
+						if (count == 2)
+							currentPoints += 25;
+						if (count == 3)
+							currentPoints += 50;
+						col--;
+					}
 
-						count = 0;
-						col = j;
+					count = 0;
+					col = j;
+					row++;
+
+					while ((row < N) && (board[row][col] == 'O')){
+						count++;
+						if (count == 1)
+							currentPoints += 5;
+						if (count == 2)
+							currentPoints += 25;
+						if (count == 3)
+							currentPoints += 50;
 						row++;
+					}
 
-						while ((row < N) && (board[row][col] == 'O')){
-							count++;
-							if (count == 1)
-								currentPoints += 5;
-							if (count == 2)
-								currentPoints += 25;
-							if (count == 3)
-								currentPoints += 50;
-							row++;
-						}
-
-						if (i - 1 >= 0)
-							row = i - 1;
-						while ((row >= 0) && (board[row][col] == 'O')){
-							count++;
-							if (count == 1)
-								currentPoints += 5;
-							if (count == 2)
-								currentPoints += 25;
-							if (count == 3)
-								currentPoints += 50;
-							row--;
-						}
+					if (i - 1 >= 0)
+						row = i - 1;
+					while ((row >= 0) && (board[row][col] == 'O')){
+						count++;
+						if (count == 1)
+							currentPoints += 5;
+						if (count == 2)
+							currentPoints += 25;
+						if (count == 3)
+							currentPoints += 50;
+						row--;
 					}
 				}
 				else if (board[i][j] == 'O'){
@@ -380,25 +362,29 @@ public class Board {
 		return evaluation;
 	}
 
-	public boolean loseCheck() {
+	private boolean loseCheck() {
 		int count;
+		moves[0] = new Move(-1,-1);
+		moves[1] = new Move(-1,-1);
 
 		for (int i = 0; i < N; i++){
 			for (int j = 0; j < N; j++){               
 				int row = i;
 				int col = j;
 				count = 0;
+				
+				//Check column to see chances that it will cause lose condition
 
-				while ((col < N) && (board[row][col] == 'O')){
+				while ((col < N) && (board[row][col] == 'X')){
 					count++;			
 					if (count == 3){
 						if ((col + 1 < N ) && (board[row][col + 1] == '-')){
 							losing = true;
-							moves[0] = new Move(row, col + 1);                            
+							moves[0] = new Move(row,col+1); 
 						}
 						else if ((col - 3 >= 0) && (board[row][col - 3] == '-')){
 							losing = true;
-							moves[1] = new Move(row, col - 3);   
+							moves[1] = new Move(row, col-3);
 						}
 					}                        
 					col++;
@@ -406,17 +392,20 @@ public class Board {
 
 				count = 0;
 				col = j;
+				
+				//Check row to see chances that it will cause lose condition
 
-				while ((row < N) && (board[row][col] == 'O')){
+				while ((row < N) && (board[row][col] == 'X')){
 					count++;
+
 					if (count == 3){
-						if ((row + 1 < N ) && (board[row + 1][col] == '-')){                                
+						if ((row + 1 < N ) && (board[row + 1][col] == '-')){
 							losing = true;
-							moves[0] = new Move(row + 1, col);
+							moves[0] = new Move(row+1,col);
 						}
 						else if ((row - 3 >= 0) && (board[row - 3][col] == '-')){
 							losing = true;
-							moves[1] = new Move(row - 3, col);
+							moves[1] = new Move(row-3, col);
 						}                          
 					}                  
 					row++;
@@ -426,8 +415,11 @@ public class Board {
 		return losing;
 	}
 
-	public boolean loseKillerMove() {
+	private boolean loseKillerMove() {
 		int count;
+
+		moves[0] = new Move(-1,-1);
+		moves[1] = new Move(-1,-1);
 
 		for (int i = 0; i < N; i++){
 			for (int j = 0; j < N; j++){               
@@ -435,7 +427,9 @@ public class Board {
 				int col = j;
 				count = 0;
 
-				while ((col < N) && (board[row][col] == 'O')){
+				// Column checker check for any possible killer move placements
+
+				while ((col < N) && (board[row][col] == 'X')){
 					count++;
 					if (count == 2){                            
 						if (((col + 1 < N ) && (board[row][col + 1] == '-'))
@@ -450,9 +444,11 @@ public class Board {
 				count = 0;
 				col = j;
 
-				while ((row < N) && (board[row][col] == 'O')){
+				// Row checker check for any possible killer move placements
+
+				while ((row < N) && (board[row][col] == 'X')){
 					count++;
-					if (count == 2){                            
+					if (count == 2){
 						if (((row + 1 < N ) && (board[row + 1][col] == '-'))
 								&& ((row - 2 >= 0) && board[row - 2][col] == '-')){
 							losing = true;
@@ -467,8 +463,11 @@ public class Board {
 		return losing;
 	}
 
-	public boolean winCheck() {
+	private boolean winCheck() {
 		int count;
+
+		moves[0] = new Move(-1,-1);
+		moves[1] = new Move(-1,-1);
 
 		for (int i = 0; i < N; i++){
 			for (int j = 0; j < N; j++){
@@ -476,9 +475,9 @@ public class Board {
 				int col = j;
 				count = 0;
 
-				//checks if there is any opportunity to set up a three trap
-
-				while ((col < N) && (board[row][col] == 'X')){
+				//Check column for possible winning moves for the piece.
+				
+				while ((col < N) && (board[row][col] == 'O')){
 					count++;			
 					if (count == 3){
 						if ((col + 1 < N ) && (board[row][col + 1] == '-')){
@@ -492,12 +491,12 @@ public class Board {
 					}
 					if (count == 2){
 						if ((col + 1 < N) && (col + 2 < N) && 
-								(board[row][col + 1] == '-') && (board[row][col + 2] == 'X')){
+								(board[row][col + 1] == '-') && (board[row][col + 2] == 'O')){
 							winning = true;
 							moves[0] = new Move (row, col + 1);  
 						}
 						else if ((col - 2 >= 0) && (col - 3 >= 0) && 
-								(board[row][col - 2] == '-') && (board[row][col - 3] == 'X')){
+								(board[row][col - 2] == '-') && (board[row][col - 3] == 'O')){
 							winning = true;
 							moves[1] = new Move (row, col-2);
 						}
@@ -507,10 +506,10 @@ public class Board {
 
 				count = 0;
 				col = j;
+				
+				//Check row for possible winning moves for the piece.
 
-				//same check for rows
-
-				while ((row < N) && (board[row][col] == 'X')){
+				while ((row < N) && (board[row][col] == 'O')){
 					count++;			
 					if (count == 3){
 						if ((row + 1 < N ) && (board[row + 1][col] == '-')){                                
@@ -524,12 +523,12 @@ public class Board {
 					}
 					if (count == 2){
 						if ((row + 1 < N) && (row + 2 < N) && 
-								(board[row + 1][col] == '-') && (board[row + 2][col] == 'X')){
+								(board[row + 1][col] == '-') && (board[row + 2][col] == 'O')){
 							winning = true;
 							moves[0] = new Move(row + 1, col);
 						}
 						else if ((row - 2 >= 0) && (row - 3 >= 0) && 
-								(board[row - 2][col] == '-') && (board[row - 3][col] == 'X')){
+								(board[row - 2][col] == '-') && (board[row - 3][col] == 'O')){
 							winning = true;
 							moves[1] = new Move(row - 2, col);
 						}
@@ -541,8 +540,11 @@ public class Board {
 		return winning;       
 	}
 
-	public boolean winKillerMove() {
+	private boolean winKillerMove() {
 		int count;
+
+		moves[0] = new Move(-1,-1);
+		moves[1] = new Move(-1,-1);
 
 		for (int i = 0; i < N; i++){
 			for (int j = 0; j < N; j++){
@@ -550,7 +552,9 @@ public class Board {
 				int col = j;
 				count = 0;
 
-				while ((col < N) && (board[row][col] == 'X')){
+				// Column checker check for any possible killer move placements
+
+				while ((col < N) && (board[row][col] == 'O')){
 					count++;
 					if (count == 2){                            
 						if (((col + 1 < N ) && (board[row][col + 1] == '-'))
@@ -574,7 +578,9 @@ public class Board {
 				count = 0;
 				col = j;
 
-				while ((row < N) && (board[row][col] == 'X')){
+				// Row checker check for any possible killer move placements
+
+				while ((row < N) && (board[row][col] == 'O')){
 					count++;
 					if (count == 2){                            
 						if (((row + 1 < N ) && (board[row + 1][col] == '-'))
@@ -610,8 +616,6 @@ public class Board {
 
 					int row = i, col = j;
 
-
-
 					//Horizontal Checker
 					while(col < N && board[row][col] == piece) {	
 						count++;
@@ -639,20 +643,59 @@ public class Board {
 		return false;
 	}
 
+	public boolean checkDraw() {
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(board[i][j] == '-')
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean emptyBoard() {
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(board[i][j] != '-')
+					return false;
+			}
+		}
+		return true;
+	}
+	
 	public String printBoard() {
 		StringBuilder sb = new StringBuilder();
-
 		sb.append("  1 2 3 4 5 6 7 8 	Player vs. Oppenent");
-
 		for(int i = 0; i < N; i ++) {
 			sb.append("\n" + Character.toString(((char)(65 + i))) + " ");
 			for(int j = 0; j < N; j++) {
 				sb.append(board[i][j] + " ");
 			}
-
-			sb.append("	   " + "Moves Here");	
 		}
+		return sb.toString();
+	}
 
+	public String printBoard(ArrayList<String> playerMoves, ArrayList<String> aiMoves) {
+		Iterator<String> playerIt = playerMoves.iterator();
+		Iterator<String> aiIt = aiMoves.iterator();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("  1 2 3 4 5 6 7 8 	Player vs. Oppenent");
+		for(int i = 0; i < N; i ++) {
+			sb.append("\n" + Character.toString(((char)(65 + i))) + " ");
+			for(int j = 0; j < N; j++) {
+				sb.append(board[i][j] + " ");
+				if(j == 7){
+					if(playerIt.hasNext() && aiIt.hasNext()) {
+						sb.append("         " + playerIt.next().toUpperCase() + "       " + aiIt.next());
+					}
+                                        else if(playerIt.hasNext()) {
+                                            sb.append("         " + playerIt.next().toUpperCase());
+                                        }
+				}
+			}
+
+		}
 		return sb.toString();
 	}
 

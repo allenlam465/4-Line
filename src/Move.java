@@ -11,7 +11,7 @@ public class Move {
 	
 	public Move(int x, int y) {
 		this.x = x;
-		this.y = y - 1;
+		this.y = y;
 		move = convertXMove(x,y);
 
 	}
